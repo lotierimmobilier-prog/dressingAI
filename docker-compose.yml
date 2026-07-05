@@ -1,9 +1,9 @@
-# Déploiement Dressify sur VPS via Docker Compose.
+# Déploiement DressingAI sur VPS via Docker Compose.
 #   1) (optionnel) crée un fichier .env à côté de ce fichier avec tes clés VITE_*
 #   2) docker compose up -d --build
 #   3) l'app est servie sur http://VPS_IP:8080  (change le port si besoin)
 services:
-  dressify:
+  dressingai:
     build:
       context: .
       args:
@@ -12,8 +12,8 @@ services:
         VITE_ANTHROPIC_API_KEY: ${VITE_ANTHROPIC_API_KEY:-}
         VITE_CLAUDE_MODEL: ${VITE_CLAUDE_MODEL:-claude-sonnet-4-6}
         VITE_OPENWEATHER_API_KEY: ${VITE_OPENWEATHER_API_KEY:-}
-    image: dressify:latest
-    container_name: dressify
+    image: dressingai:latest
+    container_name: dressingai
     restart: unless-stopped
     ports:
       - "8080:80"

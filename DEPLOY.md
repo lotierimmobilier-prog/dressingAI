@@ -1,6 +1,6 @@
-# Déployer Dressify sur ton VPS 🚀
+# Déployer DressingAI sur ton VPS 🚀
 
-Dressify est une **SPA Vite** : elle se compile en fichiers statiques (`dist/`)
+DressingAI est une **SPA Vite** : elle se compile en fichiers statiques (`dist/`)
 que n'importe quel serveur web sert. Choisis **une** des méthodes ci-dessous.
 
 > Le dépôt : `https://github.com/lotierimmobilier-prog/dressingAI`
@@ -67,10 +67,10 @@ cp .env.example .env.local && nano .env.local
 # Build
 npm ci && npm run build       # génère ./dist
 
-# Configure nginx (voir deploy/dressify.site.conf)
-sudo cp deploy/dressify.site.conf /etc/nginx/sites-available/dressify
-sudo nano /etc/nginx/sites-available/dressify   # adapte server_name + root=~/dressingAI/dist
-sudo ln -s /etc/nginx/sites-available/dressify /etc/nginx/sites-enabled/
+# Configure nginx (voir deploy/dressingai.site.conf)
+sudo cp deploy/dressingai.site.conf /etc/nginx/sites-available/dressingai
+sudo nano /etc/nginx/sites-available/dressingai   # adapte server_name + root=~/dressingAI/dist
+sudo ln -s /etc/nginx/sites-available/dressingai /etc/nginx/sites-enabled/
 sudo nginx -t && sudo systemctl reload nginx
 ```
 

@@ -1,5 +1,5 @@
 -- ============================================================
---  Dressify — Schéma Supabase (tables, RLS, storage, triggers)
+--  DressingAI — Schéma Supabase (tables, RLS, storage, triggers)
 --  À exécuter dans l'éditeur SQL Supabase (ou via `supabase db push`).
 -- ============================================================
 

@@ -80,7 +80,7 @@ export const useAuthStore = create(
       enterDemo({ freshOnboarding = false } = {}) {
         set({
           session: { demo: true },
-          user: { id: 'demo-user', email: 'demo@dressify.app' },
+          user: { id: 'demo-user', email: 'demo@dressingai.app' },
           profile: freshOnboarding ? null : get().profile || DEMO_PROFILE,
           loading: false,
           demoMode: true,
@@ -119,7 +119,7 @@ export const useAuthStore = create(
       },
     }),
     {
-      name: 'dressify-auth',
+      name: 'dressingai-auth',
       // On ne persiste que le profil en mode démo.
       partialize: (state) => (state.demoMode ? { profile: state.profile } : {}),
     },

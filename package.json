@@ -1,9 +1,9 @@
 {
-  "name": "dressify",
+  "name": "dressingai",
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "description": "Dressify — smart AI-powered wardrobe manager",
+  "description": "DressingAI — smart AI-powered wardrobe manager",
   "scripts": {
     "dev": "vite",
     "build": "vite build",

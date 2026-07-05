@@ -1,4 +1,4 @@
-# Dressify 👗✨
+# DressingAI 👗✨
 
 **Ta garde-robe intelligente, sublimée par l'IA.** Un gestionnaire de dressing
 qui ressemble à un magazine de mode vivant : compose des tenues, suis la météo,

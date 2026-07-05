@@ -82,7 +82,7 @@ export const useWardrobeStore = create(
       },
     }),
     {
-      name: 'dressify-wardrobe',
+      name: 'dressingai-wardrobe',
       partialize: (state) =>
         isSupabaseConfigured ? {} : { items: state.items, loaded: state.loaded },
     },

@@ -32,7 +32,7 @@ export default function Auth() {
           animate={{ opacity: 1, y: 0 }}
           className="mb-8 text-center"
         >
-          <h1 className="font-display text-5xl font-bold tracking-tight text-gradient">Dressify</h1>
+          <h1 className="font-display text-5xl font-bold tracking-tight text-gradient">DressingAI</h1>
           <p className="mt-2 text-muted">Ta garde-robe, sublimée par l’IA.</p>
         </motion.div>
 

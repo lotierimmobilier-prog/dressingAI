@@ -130,7 +130,7 @@ function BilanCard({ profile, stats, items }) {
           <BilanStat label="Top porté" value={stats.top[0]?.nom?.slice(0, 16) || '—'} />
           <BilanStat label="Points" value={profile?.points || 0} />
         </div>
-        <p className="mt-4 font-display text-lg text-cream">Dressify ✨</p>
+        <p className="mt-4 font-display text-lg text-cream">DressingAI ✨</p>
       </div>
       <Button variant="primary" className="w-full" onClick={() => window.print()}>
         <Download size={18} /> Enregistrer / Partager

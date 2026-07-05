@@ -37,7 +37,7 @@ export default function App() {
   if (loading) {
     return (
       <div className="grid min-h-screen place-items-center bg-bg">
-        <div className="animate-float-slow font-display text-2xl text-gradient">Dressify</div>
+        <div className="animate-float-slow font-display text-2xl text-gradient">DressingAI</div>
       </div>
     )
   }

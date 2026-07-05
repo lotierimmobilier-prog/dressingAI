@@ -70,7 +70,7 @@ export const useOutfitStore = create(
       },
     }),
     {
-      name: 'dressify-outfits',
+      name: 'dressingai-outfits',
       partialize: (state) =>
         isSupabaseConfigured
           ? {}

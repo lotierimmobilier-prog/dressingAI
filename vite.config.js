@@ -10,8 +10,8 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.svg', 'apple-touch-icon.png'],
       manifest: {
-        name: 'Dressify — Ta garde-robe intelligente',
-        short_name: 'Dressify',
+        name: 'DressingAI — Ta garde-robe intelligente',
+        short_name: 'DressingAI',
         description: 'Ton dressing IA : compose des tenues, suis la météo et brille chaque jour.',
         theme_color: '#0D0D0D',
         background_color: '#0D0D0D',
