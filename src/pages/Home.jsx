@@ -28,12 +28,12 @@ export default function Home() {
   const { reward } = useGameification()
 
   const [mood, setMood] = useState(null)
-  const [palette, setPalette] = useState(profile?.couleurs_fetiches || ['#E8C547', '#FF6B6B', '#A8E6CF'])
+  const [palette, setPalette] = useState(profile?.couleurs_fetiches || ['#8B7CF0', '#FF6B6B', '#A8E6CF'])
   const [outfits, setOutfits] = useState([])
   const [index, setIndex] = useState(0)
   const [thinking, setThinking] = useState(false)
 
-  const tint = mood?.tint || palette[0] || '#E8C547'
+  const tint = mood?.tint || palette[0] || '#8B7CF0'
 
   async function selectMood(m) {
     setMood(m)

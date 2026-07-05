@@ -14,7 +14,7 @@ import { isClaudeConfigured } from '../lib/claude'
 const SHORTCUTS = [
   { to: '/style-twin', icon: Wand2, label: 'Style Twin', desc: 'Ton alter ego mode', color: '#FF6B6B' },
   { to: '/capsule', icon: Shirt, label: 'Capsule Wardrobe', desc: '10 pièces, X tenues', color: '#A8E6CF' },
-  { to: '/semaine', icon: CalendarRange, label: 'Ma semaine', desc: 'Météo + tenues 7j', color: '#E8C547' },
+  { to: '/semaine', icon: CalendarRange, label: 'Ma semaine', desc: 'Météo + tenues 7j', color: '#8B7CF0' },
 ]
 
 export default function Profil() {
@@ -28,7 +28,7 @@ export default function Profil() {
   const [shareOpen, setShareOpen] = useState(false)
   const [inviteEmail, setInviteEmail] = useState('')
   const [members, setMembers] = useState([
-    { email: profile?.prenom ? `${profile.prenom}` : 'Moi', color: '#E8C547' },
+    { email: profile?.prenom ? `${profile.prenom}` : 'Moi', color: '#8B7CF0' },
   ])
 
   const points = profile?.points || 0

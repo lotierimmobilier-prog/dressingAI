@@ -8,11 +8,17 @@ export default {
         surface: '#161616',
         'surface-2': '#1E1E1E',
         accent: {
-          DEFAULT: '#E8C547', // jaune moutarde lumineux
-          soft: '#F2D779',
+          DEFAULT: '#8B7CF0', // violet de marque (lumineux, texte sombre lisible)
+          soft: '#A99CF5',
         },
-        coral: '#FF6B6B', // corail vif
-        mint: '#A8E6CF', // menthe douce
+        brand: {
+          violet: '#7B6CE0',
+          'violet-deep': '#6C5CE7',
+          'violet-light': '#A48DE8',
+          ink: '#232A47', // navy du logo
+        },
+        coral: '#FF6B6B', // corail vif (accent secondaire)
+        mint: '#A8E6CF', // menthe douce (accent tertiaire)
         cream: '#F5F5F0', // texte principal (blanc cassé chaud)
         muted: '#888888', // texte secondaire
       },
@@ -26,7 +32,7 @@ export default {
         '3xl': '2rem',
       },
       boxShadow: {
-        glow: '0 0 40px -8px rgba(232, 197, 71, 0.45)',
+        glow: '0 0 40px -8px rgba(139, 124, 240, 0.5)',
         'glow-coral': '0 0 40px -8px rgba(255, 107, 107, 0.45)',
         card: '0 8px 30px -12px rgba(0, 0, 0, 0.7)',
       },

@@ -12,7 +12,7 @@ export const DEMO_PROFILE = {
   prenom: 'Léa',
   avatar_emoji: '🦋',
   styles_preferes: ['Chic', 'Minimaliste', 'Vintage'],
-  couleurs_fetiches: ['#E8C547', '#FF6B6B', '#0D0D0D'],
+  couleurs_fetiches: ['#8B7CF0', '#FF6B6B', '#232A47'],
   budget_moyen: 45,
   points: 185,
   badges: ['first_look', 'fashionista'],

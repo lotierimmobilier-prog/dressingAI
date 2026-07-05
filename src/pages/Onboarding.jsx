@@ -45,7 +45,7 @@ export default function Onboarding() {
 
   const next = () => (step < 3 ? setStep(step + 1) : finish())
 
-  const tint = couleurs[0] || '#E8C547'
+  const tint = couleurs[0] || '#8B7CF0'
 
   return (
     <MirrorBackground tint={tint}>

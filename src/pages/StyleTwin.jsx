@@ -22,7 +22,7 @@ function localTwin(items) {
     description:
       'Ta garde-robe raconte une personne qui aime les basiques bien choisis relevés par des pièces à caractère. Un équilibre entre confort et affirmation.',
     influences: [top[0] || 'Minimalisme', 'Seconde main chic', 'Palette maîtrisée'],
-    palette_signature: palette.length ? palette : ['#E8C547', '#FF6B6B', '#A8E6CF'],
+    palette_signature: palette.length ? palette : ['#8B7CF0', '#FF6B6B', '#A8E6CF'],
     conseil_signature: 'Ose un accessoire statement pour twister tes basiques.',
     celebrite_style: 'Zoë Kravitz',
     _demo: true,

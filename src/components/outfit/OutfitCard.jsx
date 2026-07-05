@@ -33,7 +33,7 @@ function Piece({ id }) {
  * Tenue proposée façon "polaroid" avec fond coloré assorti.
  * Boutons : "Je porte ça !" + "Suivante" + recherche Vinted des pièces manquantes.
  */
-export default function OutfitCard({ tenue, accent = '#E8C547', onWear, onNext, onVinted }) {
+export default function OutfitCard({ tenue, accent = '#8B7CF0', onWear, onNext, onVinted }) {
   const ids = [tenue.haut_id, tenue.bas_id, tenue.chaussures_id, tenue.accessoire_id].filter(Boolean)
   const score = tenue.score_coherence ?? tenue.score_ia ?? 80
 

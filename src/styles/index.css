@@ -4,7 +4,7 @@
 
 @layer base {
   :root {
-    --mood-1: #e8c547;
+    --mood-1: #8b7cf0;
     --mood-2: #ff6b6b;
     --mood-3: #a8e6cf;
   }
@@ -80,7 +80,7 @@
 
 @layer utilities {
   .text-gradient {
-    background: linear-gradient(120deg, #e8c547, #ff6b6b 60%, #a8e6cf);
+    background: linear-gradient(120deg, #a48de8, #8b7cf0 50%, #6c5ce7);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;

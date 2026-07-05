@@ -25,14 +25,18 @@ export default function Auth() {
   }
 
   return (
-    <MirrorBackground tint="#E8C547">
+    <MirrorBackground tint="#8B7CF0">
       <div className="mx-auto flex min-h-screen max-w-md flex-col justify-center px-6 py-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="mb-8 text-center"
         >
-          <h1 className="font-display text-5xl font-bold tracking-tight text-gradient">DressingAI</h1>
+          <img src="/favicon.svg" alt="" className="mx-auto mb-4 h-20 w-20 drop-shadow-glow" />
+          <h1 className="font-display text-5xl font-bold tracking-tight">
+            <span className="text-cream">Dressing</span>
+            <span className="text-gradient">AI</span>
+          </h1>
           <p className="mt-2 text-muted">Ta garde-robe, sublimée par l’IA.</p>
         </motion.div>
 

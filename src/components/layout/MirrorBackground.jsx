@@ -6,7 +6,7 @@ import { motion } from 'framer-motion'
  * tournante) + halo pulsant. La teinte (`tint`) change selon l'humeur
  * sélectionnée sur la home.
  */
-export default function MirrorBackground({ tint = '#E8C547', intensity = 1, children }) {
+export default function MirrorBackground({ tint = '#8B7CF0', intensity = 1, children }) {
   return (
     <div className="relative min-h-full overflow-hidden">
       {/* Couche miroir animée */}

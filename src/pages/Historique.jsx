@@ -48,7 +48,7 @@ export default function Historique() {
       {/* KPI rapides */}
       <div className="mb-5 grid grid-cols-2 gap-3">
         <StatCard icon={TrendingUp} label="Versatilité" value={`${stats.versatility}/100`} color="#A8E6CF" />
-        <StatCard icon={Coins} label="Coût / port" value={stats.cpw ? `${stats.cpw} €` : '—'} color="#E8C547" />
+        <StatCard icon={Coins} label="Coût / port" value={stats.cpw ? `${stats.cpw} €` : '—'} color="#8B7CF0" />
       </div>
 
       {/* Podium */}
@@ -120,7 +120,7 @@ function BilanCard({ profile, stats, items }) {
       <div
         id="bilan"
         className="rounded-3xl p-6 text-center"
-        style={{ background: `linear-gradient(160deg, ${topColor?.color || '#E8C547'}, #0D0D0D)` }}
+        style={{ background: `linear-gradient(160deg, ${topColor?.color || '#8B7CF0'}, #0D0D0D)` }}
       >
         <p className="label-mono text-cream/80">Bilan Mode · {profile?.prenom}</p>
         <p className="my-3 font-display text-4xl text-cream">{items.length} pièces</p>

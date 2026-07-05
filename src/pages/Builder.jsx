@@ -293,7 +293,7 @@ function PhotoScan() {
       {combos.map((c, i) => (
         <div key={i}>
           <p className="label-mono mb-2">Combinaison {i + 1} · {c.score_coherence}%</p>
-          <OutfitCard tenue={c} accent={detected?.couleur_hex || '#E8C547'} onWear={() => {}} onNext={() => {}} />
+          <OutfitCard tenue={c} accent={detected?.couleur_hex || '#8B7CF0'} onWear={() => {}} onNext={() => {}} />
         </div>
       ))}
     </div>

@@ -5,7 +5,7 @@ import { motion } from 'framer-motion'
  * Confetti aux couleurs fournies (ex: couleurs du vêtement ajouté).
  * Léger, sans dépendance : particules DOM animées via framer-motion.
  */
-export default function Confetti({ colors = ['#E8C547', '#FF6B6B', '#A8E6CF'], count = 42, run }) {
+export default function Confetti({ colors = ['#8B7CF0', '#FF6B6B', '#A8E6CF'], count = 42, run }) {
   const [pieces, setPieces] = useState([])
 
   useEffect(() => {
@@ -13,7 +13,7 @@ export default function Confetti({ colors = ['#E8C547', '#FF6B6B', '#A8E6CF'], c
     const seed = Array.from({ length: count }).map((_, i) => ({
       id: `${run}-${i}`,
       x: (i / count) * 100 + (i % 5) * 2 - 5,
-      color: colors[i % colors.length] || '#E8C547',
+      color: colors[i % colors.length] || '#8B7CF0',
       rotate: i * 33,
       delay: (i % 10) * 0.02,
       size: 6 + (i % 4) * 2,
