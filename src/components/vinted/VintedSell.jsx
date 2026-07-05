@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Loader2, Copy, Check, ExternalLink, Download, Sparkles, Tag } from 'lucide-react'
+import { Loader2, Copy, Check, ExternalLink, Download, Sparkles, Tag, Share2 } from 'lucide-react'
 import Modal from '../ui/Modal'
 import Button from '../ui/Button'
 import { generateVintedListing, isClaudeConfigured } from '../../lib/claude'
@@ -83,6 +83,41 @@ export default function VintedSell({ item, open, onClose, onShared }) {
     onShared?.()
   }
 
+  /**
+   * Partage natif (Web Share API) : envoie la PHOTO en fichier vers le menu de
+   * partage du téléphone → l'app Vinted y apparaît et ouvre une annonce avec la
+   * photo déjà attachée. Le texte de l'annonce est copié pour le coller.
+   * Nécessite un contexte sécurisé (HTTPS).
+   */
+  async function shareToVinted() {
+    haptic([10, 30])
+    await copyText(fullText) // le texte est prêt à coller
+    try {
+      const shareData = {
+        title: listing.titre,
+        text: `${listing.description}\n\nPrix : ${listing.prix_conseille} €`,
+      }
+      if (item?.photo_url) {
+        const res = await fetch(item.photo_url)
+        const blob = await res.blob()
+        const file = new File(
+          [blob],
+          `${(item.nom || 'vetement').replace(/\s+/g, '-')}.jpg`,
+          { type: blob.type || 'image/jpeg' },
+        )
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+          shareData.files = [file]
+        }
+      }
+      await navigator.share(shareData)
+      onShared?.()
+      return
+    } catch (e) {
+      if (e && e.name === 'AbortError') return // annulé par l'utilisateur
+    }
+    openVinted() // repli si le partage échoue
+  }
+
   function downloadPhoto() {
     if (!item?.photo_url) return
     const a = document.createElement('a')
@@ -96,6 +131,7 @@ export default function VintedSell({ item, open, onClose, onShared }) {
   const fullText = listing
     ? `${listing.titre}\n\n${listing.description}\n\nPrix : ${listing.prix_conseille} €`
     : ''
+  const shareSupported = typeof navigator !== 'undefined' && typeof navigator.share === 'function'
 
   return (
     <Modal open={open} onClose={onClose} title="Vendre sur Vinted 💶">
@@ -168,14 +204,34 @@ export default function VintedSell({ item, open, onClose, onShared }) {
             )}
           </div>
 
-          <Button variant="primary" className="w-full" onClick={openVinted}>
-            <ExternalLink size={18} /> Ouvrir Vinted et coller
-          </Button>
-
-          <p className="text-center text-xs text-muted">
-            Vinted ne permet pas la publication automatique : colle le titre / la
-            description, ajoute la photo, publie. ~20 secondes.
-          </p>
+          {shareSupported ? (
+            <>
+              <Button variant="primary" className="w-full" onClick={shareToVinted}>
+                <Share2 size={18} /> Partager vers Vinted
+              </Button>
+              <button
+                onClick={openVinted}
+                className="flex w-full items-center justify-center gap-2 py-2 text-sm text-muted hover:text-cream"
+              >
+                <ExternalLink size={15} /> ou ouvrir Vinted dans le navigateur
+              </button>
+              <p className="text-center text-xs text-muted">
+                Choisis <b className="text-cream">Vinted</b> dans le menu de partage : la
+                photo est envoyée et le texte est déjà copié, tu n’as plus qu’à coller. ✨
+              </p>
+            </>
+          ) : (
+            <>
+              <Button variant="primary" className="w-full" onClick={openVinted}>
+                <ExternalLink size={18} /> Ouvrir Vinted et coller
+              </Button>
+              <p className="text-center text-xs text-muted">
+                Le <b className="text-cream">partage direct de la photo vers l’app Vinted</b>{' '}
+                s’active en HTTPS sur mobile. Pour l’instant : colle le texte, ajoute la
+                photo, publie (~20 s).
+              </p>
+            </>
+          )}
         </div>
       ) : null}
     </Modal>
