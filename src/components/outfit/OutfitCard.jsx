@@ -16,7 +16,18 @@ function Piece({ id }) {
       title={item.nom}
     >
       {item.photo_url ? (
-        <img src={item.photo_url} alt={item.nom} className="h-full w-full object-cover" />
+        <img
+          src={item.photo_url}
+          alt={item.nom}
+          className="h-full w-full object-cover"
+          onError={(e) => {
+            const t = e.currentTarget
+            if (!t.dataset.fb && item.photo_fallback) {
+              t.dataset.fb = '1'
+              t.src = item.photo_fallback
+            }
+          }}
+        />
       ) : (
         <div
           className="grid h-full w-full place-items-center text-2xl"

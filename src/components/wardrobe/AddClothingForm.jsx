@@ -99,7 +99,18 @@ export default function AddClothingForm({ userId, onSave, onColors, initial = nu
           style={{ background: tileGradient(form.couleur_hex || '#888') }}
         >
           {preview ? (
-            <img src={preview} alt={form.nom} className="aspect-[4/3] w-full object-cover" />
+            <img
+              src={preview}
+              alt={form.nom}
+              className="aspect-[4/3] w-full object-cover"
+              onError={(e) => {
+                const t = e.currentTarget
+                if (!t.dataset.fb && initial?.photo_fallback) {
+                  t.dataset.fb = '1'
+                  t.src = initial.photo_fallback
+                }
+              }}
+            />
           ) : (
             <div
               className="grid aspect-[4/3] w-full place-items-center text-7xl"

@@ -225,11 +225,28 @@ const RAW_VETEMENTS = [
   },
 ]
 
-// Chaque pièce de démo reçoit une illustration "flat-lay" libre de droit
-// (générée dans public/demo/, teintée à sa couleur), pour peupler la démo.
+// Photos Unsplash (licence libre) par pièce. Repli automatique sur
+// l'illustration générée (public/demo/*.png) si l'URL ne charge pas.
+const U = (id) => `https://images.unsplash.com/photo-${id}?w=700&q=80&auto=format&fit=crop`
+const DEMO_PHOTOS = {
+  [uid(1)]: U('1596755389378-c31d21fd1273'), // chemise beige
+  [uid(2)]: U('1594938298603-c8148c4dae35'), // pantalon tailleur noir
+  [uid(3)]: U('1595950653106-6c9ebd614d3a'), // baskets blanches
+  [uid(4)]: U('1595777457583-95e059d581b8'), // robe corail
+  [uid(5)]: U('1516762689617-e1cffcef479d'), // veste en jean
+  [uid(6)]: U('1576871337622-98d48d1cf531'), // pull moutarde
+  [uid(7)]: U('1542272604-787c3835535d'), // jean brut
+  [uid(8)]: U('1601924994987-69e26d50dc26'), // foulard
+  [uid(9)]: U('1543163521-1bf539c55dd2'), // bottines cognac
+  [uid(10)]: U('1521572163474-6864f9cf17ab'), // t-shirt blanc
+  [uid(11)]: U('1591195853828-11db59a44f6b'), // short terracotta
+  [uid(12)]: U('1588850561407-ed78c282e89b'), // casquette noire
+}
+
 export const DEMO_VETEMENTS = RAW_VETEMENTS.map((v) => ({
   ...v,
-  photo_url: `/demo/${v.id}.png`,
+  photo_url: DEMO_PHOTOS[v.id] || `/demo/${v.id}.png`,
+  photo_fallback: `/demo/${v.id}.png`,
 }))
 
 export const DEMO_HISTORIQUE = [

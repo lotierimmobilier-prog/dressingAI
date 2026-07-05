@@ -43,6 +43,13 @@ export default function ClothingCard({ item, onClick, onLongPress, size = 'grid'
             alt={item.nom}
             className="h-full w-full object-cover"
             loading="lazy"
+            onError={(e) => {
+              const t = e.currentTarget
+              if (!t.dataset.fb && item.photo_fallback) {
+                t.dataset.fb = '1'
+                t.src = item.photo_fallback
+              }
+            }}
           />
         ) : (
           <div
