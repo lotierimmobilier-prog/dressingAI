@@ -1,33 +1,34 @@
 import { useState } from 'react'
-import { Camera, Wand2, Loader2, Check } from 'lucide-react'
+import { Camera, Wand2, Loader2, Check, Trash2 } from 'lucide-react'
 import Button from '../ui/Button'
-import { CATEGORIES, SAISONS, OCCASIONS } from '../../lib/constants'
+import { CATEGORIES, SAISONS, OCCASIONS, TAGS } from '../../lib/constants'
 import { useClaudeVision } from '../../hooks/useClaudeVision'
 import { uploadClothingPhoto, isSupabaseConfigured } from '../../lib/supabase'
 
 const STYLE_OPTIONS = ['casual', 'chic', 'sport', 'soirée', 'vintage', 'streetwear', 'boho', 'minimaliste']
 
 /** Formulaire d'ajout : photo → auto-tag IA → correction manuelle → save. */
-export default function AddClothingForm({ userId, onSave, onColors }) {
+export default function AddClothingForm({ userId, onSave, onColors, initial = null, onDelete }) {
+  const isEdit = Boolean(initial)
   const { analyze, analyzing, isConfigured } = useClaudeVision()
   const [file, setFile] = useState(null)
-  const [preview, setPreview] = useState(null)
+  const [preview, setPreview] = useState(initial?.photo_url || null)
   const [autofilled, setAutofilled] = useState(false)
   const [saving, setSaving] = useState(false)
   const [saveError, setSaveError] = useState(null)
   const [form, setForm] = useState({
-    nom: '',
-    categorie: 'haut',
-    couleur_dominante: '',
-    couleur_hex: '#888888',
-    couleurs_secondaires: [],
-    style: [],
-    saison: [],
-    occasion: [],
-    marque: '',
-    taille: '',
-    prix_achat: '',
-    tags: [],
+    nom: initial?.nom || '',
+    categorie: initial?.categorie || 'haut',
+    couleur_dominante: initial?.couleur_dominante || '',
+    couleur_hex: initial?.couleur_hex || '#888888',
+    couleurs_secondaires: initial?.couleurs_secondaires || [],
+    style: initial?.style || [],
+    saison: initial?.saison || [],
+    occasion: initial?.occasion || [],
+    marque: initial?.marque || '',
+    taille: initial?.taille || '',
+    prix_achat: initial?.prix_achat ?? '',
+    tags: initial?.tags || [],
   })
 
   const update = (patch) => setForm((f) => ({ ...f, ...patch }))
@@ -64,7 +65,7 @@ export default function AddClothingForm({ userId, onSave, onColors }) {
     setSaving(true)
     setSaveError(null)
     try {
-      let photo_url = null
+      let photo_url = initial?.photo_url || null
       if (file && isSupabaseConfigured && userId && userId !== 'demo-user') {
         try {
           photo_url = await uploadClothingPhoto(userId, file)
@@ -117,9 +118,11 @@ export default function AddClothingForm({ userId, onSave, onColors }) {
         </label>
         <div className="flex flex-col justify-center gap-2">
           <p className="text-sm text-muted">
-            {isConfigured
-              ? 'L’IA analyse la photo et pré-remplit les champs.'
-              : 'Mode démo : couleur détectée automatiquement. Active l’IA pour l’analyse complète.'}
+            {isEdit
+              ? 'Touche la photo pour la remplacer.'
+              : isConfigured
+                ? 'L’IA analyse la photo et pré-remplit les champs.'
+                : 'Mode démo : couleur détectée automatiquement. Active l’IA pour l’analyse complète.'}
           </p>
           {autofilled && (
             <span className="chip w-fit text-mint">
@@ -177,14 +180,38 @@ export default function AddClothingForm({ userId, onSave, onColors }) {
           <input className="input" placeholder="Taille" value={form.taille} onChange={(e) => update({ taille: e.target.value })} />
           <input className="input" placeholder="Prix €" type="number" value={form.prix_achat} onChange={(e) => update({ prix_achat: e.target.value })} />
         </div>
+
+        <div>
+          <p className="label-mono mb-1.5">Statut</p>
+          <div className="flex flex-wrap gap-2">
+            {TAGS.map((t) => (
+              <button
+                key={t.id}
+                onClick={() => toggleArr('tags', t.id)}
+                className={`chip ${form.tags.includes(t.id) ? 'bg-accent/20 border-accent/50 text-accent' : ''}`}
+              >
+                {t.emoji} {t.label}
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
 
       {saveError && <p className="text-sm text-coral">{saveError}</p>}
 
       <Button variant="primary" className="w-full" onClick={handleSave} disabled={saving || !form.nom}>
         {saving ? <Loader2 className="animate-spin" size={18} /> : <Check size={18} />}
-        Ajouter au dressing
+        {isEdit ? 'Enregistrer les modifications' : 'Ajouter au dressing'}
       </Button>
+
+      {isEdit && onDelete && (
+        <button
+          onClick={onDelete}
+          className="flex w-full items-center justify-center gap-2 rounded-full bg-coral/10 py-3 text-coral transition hover:bg-coral/20"
+        >
+          <Trash2 size={16} /> Supprimer cette pièce
+        </button>
+      )}
     </div>
   )
 }

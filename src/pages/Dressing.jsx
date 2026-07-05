@@ -22,6 +22,7 @@ export default function Dressing() {
   const [params, setParams] = useSearchParams()
   const items = useWardrobeStore((s) => s.items)
   const add = useWardrobeStore((s) => s.add)
+  const update = useWardrobeStore((s) => s.update)
   const remove = useWardrobeStore((s) => s.remove)
   const wear = useWardrobeStore((s) => s.wear)
   const user = useAuthStore((s) => s.user)
@@ -30,6 +31,7 @@ export default function Dressing() {
   const [view, setView] = useState('grid')
   const [filters, setFilters] = useState({ categorie: null, saison: null, tag: null })
   const [addOpen, setAddOpen] = useState(false)
+  const [editItem, setEditItem] = useState(null)
   const [quickItem, setQuickItem] = useState(null)
   const [confettiRun, setConfettiRun] = useState(null)
   const [confettiColors, setConfettiColors] = useState([])
@@ -116,7 +118,7 @@ export default function Dressing() {
                 </div>
                 <div className="grid grid-cols-3 gap-3">
                   {grouped[c.id].map((it) => (
-                    <ClothingCard key={it.id} item={it} onLongPress={setQuickItem} />
+                    <ClothingCard key={it.id} item={it} onClick={setEditItem} onLongPress={setQuickItem} />
                   ))}
                 </div>
               </section>
@@ -128,7 +130,13 @@ export default function Dressing() {
           className={`grid gap-3 ${view === 'lookbook' ? 'grid-cols-2' : 'grid-cols-2 sm:grid-cols-3 md:grid-cols-4'}`}
         >
           {filtered.map((it) => (
-            <ClothingCard key={it.id} item={it} size={view === 'lookbook' ? 'lookbook' : 'grid'} onLongPress={setQuickItem} />
+            <ClothingCard
+              key={it.id}
+              item={it}
+              size={view === 'lookbook' ? 'lookbook' : 'grid'}
+              onClick={setEditItem}
+              onLongPress={setQuickItem}
+            />
           ))}
         </div>
       )}
@@ -136,6 +144,24 @@ export default function Dressing() {
       {/* Modal ajout */}
       <Modal open={addOpen} onClose={() => setAddOpen(false)} title="Ajouter un vêtement">
         <AddClothingForm userId={user?.id} onSave={handleSave} onColors={setConfettiColors} />
+      </Modal>
+
+      {/* Modal fiche / édition (tap sur une pièce) */}
+      <Modal open={!!editItem} onClose={() => setEditItem(null)} title="Modifier la pièce">
+        {editItem && (
+          <AddClothingForm
+            userId={user?.id}
+            initial={editItem}
+            onSave={async (patch) => {
+              await update(editItem.id, patch)
+              setEditItem(null)
+            }}
+            onDelete={() => {
+              remove(editItem.id)
+              setEditItem(null)
+            }}
+          />
+        )}
       </Modal>
 
       {/* Actions rapides (long press) */}
