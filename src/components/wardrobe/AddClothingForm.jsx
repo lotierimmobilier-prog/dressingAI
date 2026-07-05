@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useState } from 'react'
 import { Camera, Wand2, Loader2, Check } from 'lucide-react'
 import Button from '../ui/Button'
 import { CATEGORIES, SAISONS, OCCASIONS } from '../../lib/constants'
@@ -9,7 +9,6 @@ const STYLE_OPTIONS = ['casual', 'chic', 'sport', 'soirée', 'vintage', 'streetw
 
 /** Formulaire d'ajout : photo → auto-tag IA → correction manuelle → save. */
 export default function AddClothingForm({ userId, onSave, onColors }) {
-  const fileRef = useRef(null)
   const { analyze, analyzing, isConfigured } = useClaudeVision()
   const [file, setFile] = useState(null)
   const [preview, setPreview] = useState(null)
@@ -89,11 +88,11 @@ export default function AddClothingForm({ userId, onSave, onColors }) {
 
   return (
     <div className="space-y-5">
-      {/* Zone photo */}
+      {/* Zone photo — <label> natif : ouvre l'appareil photo / la galerie
+          de façon fiable (y compris sur iPhone, sans click() JS). */}
       <div className="flex gap-4">
-        <button
-          onClick={() => fileRef.current?.click()}
-          className="relative grid h-28 w-28 shrink-0 place-items-center overflow-hidden rounded-3xl border border-dashed border-white/20 bg-surface-2"
+        <label
+          className="relative grid h-28 w-28 shrink-0 cursor-pointer place-items-center overflow-hidden rounded-3xl border border-dashed border-white/20 bg-surface-2"
           style={preview ? { borderStyle: 'solid' } : undefined}
         >
           {preview ? (
@@ -109,12 +108,18 @@ export default function AddClothingForm({ userId, onSave, onColors }) {
               <Loader2 className="animate-spin text-accent" />
             </div>
           )}
-        </button>
+          <input
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={handleFile}
+          />
+        </label>
         <div className="flex flex-col justify-center gap-2">
           <p className="text-sm text-muted">
             {isConfigured
-              ? 'L’IA Claude analyse la photo et pré-remplit les champs.'
-              : 'Mode démo : couleur détectée automatiquement. Ajoute ta clé Claude pour l’analyse complète.'}
+              ? 'L’IA analyse la photo et pré-remplit les champs.'
+              : 'Mode démo : couleur détectée automatiquement. Active l’IA pour l’analyse complète.'}
           </p>
           {autofilled && (
             <span className="chip w-fit text-mint">
@@ -122,13 +127,6 @@ export default function AddClothingForm({ userId, onSave, onColors }) {
             </span>
           )}
         </div>
-        <input
-          ref={fileRef}
-          type="file"
-          accept="image/*"
-          className="hidden"
-          onChange={handleFile}
-        />
       </div>
 
       {/* Champs */}

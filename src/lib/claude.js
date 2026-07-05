@@ -11,7 +11,7 @@
 import { supabase, isSupabaseConfigured } from './supabase'
 
 const API_KEY = import.meta.env.VITE_ANTHROPIC_API_KEY
-const MODEL = import.meta.env.VITE_CLAUDE_MODEL || 'claude-sonnet-4-6'
+const MODEL = import.meta.env.VITE_CLAUDE_MODEL || 'claude-sonnet-5'
 const API_URL = 'https://api.anthropic.com/v1/messages'
 const PROXY_ENABLED = import.meta.env.VITE_CLAUDE_PROXY === '1' && isSupabaseConfigured
 
