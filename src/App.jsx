@@ -45,8 +45,8 @@ export default function App() {
   // Non connecté → auth
   if (!user) return <Auth />
 
-  // Connecté mais pas de profil → onboarding
-  if (!profile) return <Onboarding />
+  // Connecté mais profil incomplet (le trigger crée une ligne vide) → onboarding
+  if (!profile || !profile.prenom) return <Onboarding />
 
   return (
     <div className="mx-auto min-h-screen max-w-lg pb-28">
