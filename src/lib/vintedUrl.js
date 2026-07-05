@@ -43,6 +43,31 @@ export function estimatePrice(categorie) {
   return { min: range[0], max: range[1] }
 }
 
+/** URL de la page de dépôt d'annonce Vinted (ne peut pas être pré-remplie). */
+export const VINTED_SELL_URL = 'https://www.vinted.fr/items/new'
+
+/** Génère une annonce Vinted correcte SANS IA (fallback local). */
+export function localListing(item) {
+  const titre = [item.nom, item.marque, item.taille && `T. ${item.taille}`]
+    .filter(Boolean)
+    .join(' · ')
+    .slice(0, 60)
+  const range = estimatePrice(item.categorie)
+  const prix = item.prix_achat
+    ? Math.max(3, Math.round(item.prix_achat * 0.4))
+    : Math.round((range.min + range.max) / 2)
+  const description = [
+    `${item.nom}${item.marque ? ` de ${item.marque}` : ''}${
+      item.couleur_dominante ? `, coloris ${item.couleur_dominante.toLowerCase()}` : ''
+    }${item.taille ? `, taille ${item.taille}` : ''}.`,
+    'Très bon état, peu porté.',
+    `Parfait pour un look ${(item.style && item.style[0]) || 'polyvalent'}.`,
+    'Envoi rapide et soigné 📦 N’hésite pas si tu as des questions !',
+    `#${item.categorie} #${(item.style && item.style[0]) || 'mode'} #secondemain #vinted`,
+  ].join('\n')
+  return { titre, description, prix_conseille: prix, mots_cles: item.style || [] }
+}
+
 /**
  * À partir d'un dressing, détecte les "trous" (catégories peu / non couvertes)
  * et propose des recherches Vinted pour les combler.

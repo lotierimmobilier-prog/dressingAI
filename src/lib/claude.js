@@ -143,3 +143,21 @@ export async function evaluateOutfit(pieces) {
   const text = await callClaude({ content: prompt, maxTokens: 500 })
   return extractJSON(text)
 }
+
+/** Génère une annonce Vinted optimisée à partir d'une pièce. */
+export async function generateVintedListing(item) {
+  const infos = {
+    nom: item.nom,
+    marque: item.marque,
+    categorie: item.categorie,
+    couleur: item.couleur_dominante,
+    taille: item.taille,
+    prix_achat: item.prix_achat,
+    style: item.style,
+  }
+  const prompt = `Tu es expert en vente sur Vinted. Rédige une annonce optimisée en français pour cet article d'occasion : ${JSON.stringify(
+    infos,
+  )}. Objectif : vendre vite et bien. Return ONLY JSON: { "titre": "titre accrocheur, max 60 caractères, avec la marque et la taille si connues", "description": "4 à 6 lignes : matière/coupe supposée, état (très bon état), style, atouts, mesures si utile, ton chaleureux, et 4-5 hashtags pertinents en fin", "prix_conseille": nombre_en_euros_realiste_pour_la_seconde_main, "categorie_vinted": "suggestion de catégorie Vinted", "mots_cles": ["mot1", "mot2", "mot3"] } No markdown, only JSON.`
+  const text = await callClaude({ content: prompt, maxTokens: 700 })
+  return extractJSON(text)
+}

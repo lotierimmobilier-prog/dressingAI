@@ -5,6 +5,7 @@ import PageTransition from '../components/layout/PageTransition'
 import ClothingCard from '../components/wardrobe/ClothingCard'
 import FilterBar from '../components/wardrobe/FilterBar'
 import AddClothingForm from '../components/wardrobe/AddClothingForm'
+import VintedSell from '../components/vinted/VintedSell'
 import Modal from '../components/ui/Modal'
 import Confetti from '../components/ui/Confetti'
 import { useWardrobeStore } from '../stores/wardrobeStore'
@@ -32,6 +33,7 @@ export default function Dressing() {
   const [filters, setFilters] = useState({ categorie: null, saison: null, tag: null })
   const [addOpen, setAddOpen] = useState(false)
   const [editItem, setEditItem] = useState(null)
+  const [sellItem, setSellItem] = useState(null)
   const [quickItem, setQuickItem] = useState(null)
   const [confettiRun, setConfettiRun] = useState(null)
   const [confettiColors, setConfettiColors] = useState([])
@@ -160,9 +162,21 @@ export default function Dressing() {
               remove(editItem.id)
               setEditItem(null)
             }}
+            onSell={() => {
+              setSellItem(editItem)
+              setEditItem(null)
+            }}
           />
         )}
       </Modal>
+
+      {/* Assistant de mise en vente Vinted */}
+      <VintedSell
+        item={sellItem}
+        open={!!sellItem}
+        onClose={() => setSellItem(null)}
+        onShared={() => reward('share_look')}
+      />
 
       {/* Actions rapides (long press) */}
       <Modal open={!!quickItem} onClose={() => setQuickItem(null)} title={quickItem?.nom} maxWidth="max-w-xs">

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Camera, Wand2, Loader2, Check, Trash2 } from 'lucide-react'
+import { Camera, Wand2, Loader2, Check, Trash2, ShoppingBag } from 'lucide-react'
 import Button from '../ui/Button'
 import { CATEGORIES, SAISONS, OCCASIONS, TAGS } from '../../lib/constants'
 import { useClaudeVision } from '../../hooks/useClaudeVision'
@@ -8,7 +8,7 @@ import { uploadClothingPhoto, isSupabaseConfigured } from '../../lib/supabase'
 const STYLE_OPTIONS = ['casual', 'chic', 'sport', 'soirée', 'vintage', 'streetwear', 'boho', 'minimaliste']
 
 /** Formulaire d'ajout : photo → auto-tag IA → correction manuelle → save. */
-export default function AddClothingForm({ userId, onSave, onColors, initial = null, onDelete }) {
+export default function AddClothingForm({ userId, onSave, onColors, initial = null, onDelete, onSell }) {
   const isEdit = Boolean(initial)
   const { analyze, analyzing, isConfigured } = useClaudeVision()
   const [file, setFile] = useState(null)
@@ -203,6 +203,15 @@ export default function AddClothingForm({ userId, onSave, onColors, initial = nu
         {saving ? <Loader2 className="animate-spin" size={18} /> : <Check size={18} />}
         {isEdit ? 'Enregistrer les modifications' : 'Ajouter au dressing'}
       </Button>
+
+      {isEdit && onSell && (
+        <button
+          onClick={onSell}
+          className="flex w-full items-center justify-center gap-2 rounded-full bg-mint/10 py-3 text-mint transition hover:bg-mint/20"
+        >
+          <ShoppingBag size={16} /> Vendre sur Vinted
+        </button>
+      )}
 
       {isEdit && onDelete && (
         <button
