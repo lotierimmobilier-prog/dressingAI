@@ -26,6 +26,16 @@ export const useWardrobeStore = create(
         set({ items: data || [], loaded: true })
       },
 
+      /** Remplit le dressing avec les 12 pièces d'exemple (photos incluses). */
+      async seedDemo(userId) {
+        for (const it of DEMO_VETEMENTS) {
+          // On retire les champs propres à la démo (id local, repli d'image).
+          const { id, photo_fallback, ...rest } = it
+          // eslint-disable-next-line no-await-in-loop
+          await get().add(rest, userId)
+        }
+      },
+
       async add(item, userId) {
         if (!isSupabaseConfigured) {
           const local = { id: crypto.randomUUID(), nb_ports: 0, tags: [], ...item }

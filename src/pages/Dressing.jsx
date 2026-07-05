@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { Plus, LayoutGrid, Rows3, BookOpen, Shirt, Pencil, Trash2, CheckCircle2 } from 'lucide-react'
+import { Plus, LayoutGrid, Rows3, BookOpen, Shirt, Trash2, CheckCircle2, Sparkles, Loader2 } from 'lucide-react'
 import PageTransition from '../components/layout/PageTransition'
 import ClothingCard from '../components/wardrobe/ClothingCard'
 import FilterBar from '../components/wardrobe/FilterBar'
@@ -26,6 +26,7 @@ export default function Dressing() {
   const update = useWardrobeStore((s) => s.update)
   const remove = useWardrobeStore((s) => s.remove)
   const wear = useWardrobeStore((s) => s.wear)
+  const seedDemo = useWardrobeStore((s) => s.seedDemo)
   const user = useAuthStore((s) => s.user)
   const { reward } = useGameification()
 
@@ -37,6 +38,18 @@ export default function Dressing() {
   const [quickItem, setQuickItem] = useState(null)
   const [confettiRun, setConfettiRun] = useState(null)
   const [confettiColors, setConfettiColors] = useState([])
+  const [seeding, setSeeding] = useState(false)
+
+  async function handleSeed() {
+    setSeeding(true)
+    try {
+      await seedDemo(user.id)
+      setConfettiColors(['#8B7CF0', '#FF6B6B', '#A8E6CF'])
+      setConfettiRun(Date.now())
+    } finally {
+      setSeeding(false)
+    }
+  }
 
   useEffect(() => {
     if (params.get('add')) {
@@ -86,6 +99,18 @@ export default function Dressing() {
           <Plus size={18} /> Ajouter
         </button>
       </header>
+
+      {/* Dressing d'exemple (démo) : proposé tant que le placard est peu rempli */}
+      {items.length < 4 && (
+        <button
+          onClick={handleSeed}
+          disabled={seeding}
+          className="mb-3 flex w-full items-center justify-center gap-2 rounded-2xl border border-accent/30 bg-accent/10 py-3 text-sm text-accent transition hover:bg-accent/20 disabled:opacity-60"
+        >
+          {seeding ? <Loader2 className="animate-spin" size={16} /> : <Sparkles size={16} />}
+          {seeding ? 'Chargement…' : 'Charger un dressing d’exemple (12 pièces)'}
+        </button>
+      )}
 
       {/* Sélecteur de vue */}
       <div className="mb-3 flex gap-1 rounded-2xl bg-white/5 p-1">
