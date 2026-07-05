@@ -1,16 +1,22 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
   <defs>
-    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#E8C547"/>
-      <stop offset="0.6" stop-color="#FF6B6B"/>
-      <stop offset="1" stop-color="#A8E6CF"/>
+    <linearGradient id="violet" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#A48DE8"/>
+      <stop offset="1" stop-color="#6C5CE7"/>
     </linearGradient>
   </defs>
-  <rect width="512" height="512" rx="112" fill="#0D0D0D"/>
-  <!-- cintre stylisé -->
-  <circle cx="256" cy="150" r="26" fill="none" stroke="url(#g)" stroke-width="18"/>
-  <path d="M256 176 L256 210 L120 300 Q104 312 120 326 L392 326 Q408 312 392 300 L256 210"
-        fill="none" stroke="url(#g)" stroke-width="22" stroke-linejoin="round" stroke-linecap="round"/>
-  <text x="256" y="418" font-family="Unbounded, sans-serif" font-size="86" font-weight="800"
-        text-anchor="middle" fill="url(#g)">D</text>
+  <!-- Tuile sombre arrondie (l'app est en thème sombre) -->
+  <rect width="512" height="512" rx="116" fill="#161A2E"/>
+
+  <!-- Cintre : crochet + épaules triangulaires -->
+  <g fill="none" stroke="url(#violet)" stroke-width="22" stroke-linecap="round" stroke-linejoin="round">
+    <!-- crochet -->
+    <path d="M256 214 v-24 c 0-24 -34-24 -34 -2"/>
+    <!-- épaules + barre basse -->
+    <path d="M256 214 L150 300 Q142 307 152 312 L360 312 Q370 307 362 300 L256 214 Z"/>
+  </g>
+
+  <!-- Étincelles IA -->
+  <path d="M392 132 L402 160 L430 170 L402 180 L392 208 L382 180 L354 170 L382 160 Z" fill="url(#violet)"/>
+  <path d="M430 210 L436 226 L452 232 L436 238 L430 254 L424 238 L408 232 L424 226 Z" fill="#A48DE8"/>
 </svg>
