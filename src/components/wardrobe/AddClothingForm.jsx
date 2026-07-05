@@ -4,6 +4,7 @@ import Button from '../ui/Button'
 import { CATEGORIES, SAISONS, OCCASIONS, TAGS } from '../../lib/constants'
 import { useClaudeVision } from '../../hooks/useClaudeVision'
 import { uploadClothingPhoto, isSupabaseConfigured } from '../../lib/supabase'
+import { tileGradient, readableText } from '../../lib/colors'
 
 const STYLE_OPTIONS = ['casual', 'chic', 'sport', 'soirée', 'vintage', 'streetwear', 'boho', 'minimaliste']
 
@@ -91,46 +92,68 @@ export default function AddClothingForm({ userId, onSave, onColors, initial = nu
     <div className="space-y-5">
       {/* Zone photo — <label> natif : ouvre l'appareil photo / la galerie
           de façon fiable (y compris sur iPhone, sans click() JS). */}
-      <div className="flex gap-4">
+      {isEdit ? (
+        // FICHE : grande photo en évidence, tap = remplacer.
         <label
-          className="relative grid h-28 w-28 shrink-0 cursor-pointer place-items-center overflow-hidden rounded-3xl border border-dashed border-white/20 bg-surface-2"
-          style={preview ? { borderStyle: 'solid' } : undefined}
+          className="relative block w-full cursor-pointer overflow-hidden rounded-3xl border border-white/10"
+          style={{ background: tileGradient(form.couleur_hex || '#888') }}
         >
           {preview ? (
-            <img src={preview} alt="Aperçu" className="h-full w-full object-cover" />
+            <img src={preview} alt={form.nom} className="aspect-[4/3] w-full object-cover" />
           ) : (
-            <div className="text-center text-muted">
-              <Camera className="mx-auto mb-1" size={22} />
-              <span className="text-[11px]">Photo</span>
+            <div
+              className="grid aspect-[4/3] w-full place-items-center text-7xl"
+              style={{ color: readableText(form.couleur_hex || '#888') }}
+            >
+              {CATEGORIES.find((c) => c.id === form.categorie)?.emoji || '👗'}
             </div>
           )}
+          <div className="absolute inset-x-0 bottom-0 flex items-center gap-2 bg-gradient-to-t from-black/70 to-transparent p-3 text-sm text-cream">
+            <Camera size={16} /> {preview ? 'Changer la photo' : 'Ajouter une photo'}
+          </div>
           {analyzing && (
             <div className="absolute inset-0 grid place-items-center bg-bg/70 backdrop-blur-sm">
               <Loader2 className="animate-spin text-accent" />
             </div>
           )}
-          <input
-            type="file"
-            accept="image/*"
-            className="hidden"
-            onChange={handleFile}
-          />
+          <input type="file" accept="image/*" className="hidden" onChange={handleFile} />
         </label>
-        <div className="flex flex-col justify-center gap-2">
-          <p className="text-sm text-muted">
-            {isEdit
-              ? 'Touche la photo pour la remplacer.'
-              : isConfigured
+      ) : (
+        // AJOUT : vignette compacte + explication IA.
+        <div className="flex gap-4">
+          <label
+            className="relative grid h-28 w-28 shrink-0 cursor-pointer place-items-center overflow-hidden rounded-3xl border border-dashed border-white/20 bg-surface-2"
+            style={preview ? { borderStyle: 'solid' } : undefined}
+          >
+            {preview ? (
+              <img src={preview} alt="Aperçu" className="h-full w-full object-cover" />
+            ) : (
+              <div className="text-center text-muted">
+                <Camera className="mx-auto mb-1" size={22} />
+                <span className="text-[11px]">Photo</span>
+              </div>
+            )}
+            {analyzing && (
+              <div className="absolute inset-0 grid place-items-center bg-bg/70 backdrop-blur-sm">
+                <Loader2 className="animate-spin text-accent" />
+              </div>
+            )}
+            <input type="file" accept="image/*" className="hidden" onChange={handleFile} />
+          </label>
+          <div className="flex flex-col justify-center gap-2">
+            <p className="text-sm text-muted">
+              {isConfigured
                 ? 'L’IA analyse la photo et pré-remplit les champs.'
                 : 'Mode démo : couleur détectée automatiquement. Active l’IA pour l’analyse complète.'}
-          </p>
-          {autofilled && (
-            <span className="chip w-fit text-mint">
-              <Wand2 size={13} /> Auto-rempli
-            </span>
-          )}
+            </p>
+            {autofilled && (
+              <span className="chip w-fit text-mint">
+                <Wand2 size={13} /> Auto-rempli
+              </span>
+            )}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Champs */}
       <div className="space-y-3">

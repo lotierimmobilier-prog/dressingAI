@@ -18,7 +18,7 @@ export const DEMO_PROFILE = {
   badges: ['first_look', 'fashionista'],
 }
 
-export const DEMO_VETEMENTS = [
+const RAW_VETEMENTS = [
   {
     id: uid(1),
     nom: 'Chemise en lin beige',
@@ -224,6 +224,13 @@ export const DEMO_VETEMENTS = [
     derniere_date_port: '2026-06-28',
   },
 ]
+
+// Chaque pièce de démo reçoit une illustration "flat-lay" libre de droit
+// (générée dans public/demo/, teintée à sa couleur), pour peupler la démo.
+export const DEMO_VETEMENTS = RAW_VETEMENTS.map((v) => ({
+  ...v,
+  photo_url: `/demo/${v.id}.png`,
+}))
 
 export const DEMO_HISTORIQUE = [
   { id: 'h1', date_port: '2026-07-04', humeur: '😎 Décontracté', meteo: '24°C ☀️', vetements: [uid(10), uid(7), uid(3)] },
