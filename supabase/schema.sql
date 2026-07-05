@@ -66,9 +66,12 @@ create table if not exists historique_ports (
   date_port date default current_date,
   meteo text,
   humeur text,
+  vetements uuid[] default '{}',
   created_at timestamptz default now()
 );
 create index if not exists historique_user_idx on historique_ports(user_id);
+-- Ajout idempotent pour les bases déjà créées avant cette colonne :
+alter table historique_ports add column if not exists vetements uuid[] default '{}';
 
 -- ---------- Dressings partagés ----------
 create table if not exists dressing_partages (

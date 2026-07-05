@@ -15,6 +15,7 @@ export default function AddClothingForm({ userId, onSave, onColors }) {
   const [preview, setPreview] = useState(null)
   const [autofilled, setAutofilled] = useState(false)
   const [saving, setSaving] = useState(false)
+  const [saveError, setSaveError] = useState(null)
   const [form, setForm] = useState({
     nom: '',
     categorie: 'haut',
@@ -62,16 +63,25 @@ export default function AddClothingForm({ userId, onSave, onColors }) {
 
   async function handleSave() {
     setSaving(true)
+    setSaveError(null)
     try {
       let photo_url = null
       if (file && isSupabaseConfigured && userId && userId !== 'demo-user') {
-        photo_url = await uploadClothingPhoto(userId, file)
+        try {
+          photo_url = await uploadClothingPhoto(userId, file)
+        } catch {
+          // L'upload de la photo a échoué (stockage) : on enregistre quand même
+          // la pièce, sans bloquer l'utilisateur.
+          setSaveError('Photo non enregistrée, mais la pièce a bien été ajoutée.')
+        }
       }
       await onSave({
         ...form,
         prix_achat: form.prix_achat ? Number(form.prix_achat) : null,
         photo_url,
       })
+    } catch (e) {
+      setSaveError(e.message || 'Erreur à l’enregistrement')
     } finally {
       setSaving(false)
     }
@@ -116,7 +126,6 @@ export default function AddClothingForm({ userId, onSave, onColors }) {
           ref={fileRef}
           type="file"
           accept="image/*"
-          capture="environment"
           className="hidden"
           onChange={handleFile}
         />
@@ -171,6 +180,8 @@ export default function AddClothingForm({ userId, onSave, onColors }) {
           <input className="input" placeholder="Prix €" type="number" value={form.prix_achat} onChange={(e) => update({ prix_achat: e.target.value })} />
         </div>
       </div>
+
+      {saveError && <p className="text-sm text-coral">{saveError}</p>}
 
       <Button variant="primary" className="w-full" onClick={handleSave} disabled={saving || !form.nom}>
         {saving ? <Loader2 className="animate-spin" size={18} /> : <Check size={18} />}

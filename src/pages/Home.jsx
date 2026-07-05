@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { MapPin, Loader2, Sparkles, Palette } from 'lucide-react'
+import { MapPin, Loader2, Sparkles, Palette, Camera, Shirt } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import MirrorBackground from '../components/layout/MirrorBackground'
 import PageTransition from '../components/layout/PageTransition'
@@ -85,6 +85,26 @@ export default function Home() {
           <WeatherBadge weather={weather} loading={loading} />
         </header>
 
+        {/* Accueil nouveau compte : dressing vide */}
+        {items.length === 0 && (
+          <motion.button
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            onClick={() => navigate('/dressing?add=1')}
+            className="mb-6 flex w-full items-center gap-4 rounded-3xl border border-accent/30 bg-accent/10 p-4 text-left"
+          >
+            <div className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-accent text-bg">
+              <Camera size={22} />
+            </div>
+            <div>
+              <p className="font-display">Bienvenue {profile?.prenom} 👋</p>
+              <p className="text-sm text-muted">
+                Ton dressing est vide. Ajoute ta première pièce pour recevoir des tenues.
+              </p>
+            </div>
+          </motion.button>
+        )}
+
         {/* Miroir central : humeur */}
         <section className="mb-6">
           <p className="mb-3 font-display text-lg">Quelle est ton humeur ?</p>
@@ -142,13 +162,33 @@ export default function Home() {
               />
             </motion.section>
           )}
+
+          {!thinking && mood && !current && (
+            <motion.div
+              key="empty-outfit"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="mb-6 flex flex-col items-center gap-3 rounded-3xl border border-white/10 bg-surface/60 p-6 text-center"
+            >
+              <Shirt size={32} className="text-white/20" />
+              <p className="text-muted">
+                Pas assez de pièces pour composer une tenue {mood.emoji}
+              </p>
+              <button onClick={() => navigate('/dressing?add=1')} className="btn-primary">
+                <Camera size={18} /> Ajouter des vêtements
+              </button>
+            </motion.div>
+          )}
         </AnimatePresence>
 
         {/* Random Outfit Machine */}
-        <section className="mb-6 card p-4">
-          <p className="mb-3 font-display text-lg">🎰 Random Outfit Machine</p>
-          <SlotMachine dressing={items} onResult={() => reward('wear_outfit')} />
-        </section>
+        {items.length > 0 && (
+          <section className="mb-6 card p-4">
+            <p className="mb-3 font-display text-lg">🎰 Random Outfit Machine</p>
+            <SlotMachine dressing={items} onResult={() => reward('wear_outfit')} />
+          </section>
+        )}
 
         {/* Couleur du moment */}
         <section

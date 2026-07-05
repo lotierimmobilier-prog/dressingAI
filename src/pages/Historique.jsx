@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
-import { Sparkles, Recycle, TrendingUp, Coins, Download } from 'lucide-react'
+import { Sparkles, Recycle, TrendingUp, Coins, Download, BarChart3, Camera } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 import PageTransition from '../components/layout/PageTransition'
 import CalendarView from '../components/stats/CalendarView'
 import DonutChart from '../components/stats/DonutChart'
@@ -17,6 +18,7 @@ export default function Historique() {
   const wear = useWardrobeStore((s) => s.wear)
   const historique = useOutfitStore((s) => s.historique)
   const profile = useAuthStore((s) => s.profile)
+  const navigate = useNavigate()
   const [dayModal, setDayModal] = useState(null)
   const [bilanOpen, setBilanOpen] = useState(false)
 
@@ -40,6 +42,19 @@ export default function Historique() {
         </button>
       </header>
 
+      {items.length === 0 ? (
+        <div className="mt-10 flex flex-col items-center gap-3 text-center text-muted">
+          <BarChart3 size={44} className="text-white/20" />
+          <p>Aucune statistique pour l’instant.</p>
+          <p className="text-sm">
+            Ajoute des vêtements et porte des tenues : ton bilan mode se remplira tout seul.
+          </p>
+          <button onClick={() => navigate('/dressing?add=1')} className="btn-primary mt-2">
+            <Camera size={18} /> Ajouter des vêtements
+          </button>
+        </div>
+      ) : (
+        <>
       {/* Calendrier */}
       <section className="card mb-5 p-4">
         <CalendarView historique={historique} onSelectDay={setDayModal} />
@@ -78,6 +93,8 @@ export default function Historique() {
             ))}
           </div>
         </section>
+      )}
+        </>
       )}
 
       {/* Modal détail du jour */}

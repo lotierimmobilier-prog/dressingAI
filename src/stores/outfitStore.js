@@ -64,6 +64,7 @@ export const useOutfitStore = create(
             date_port: day,
             humeur,
             meteo,
+            vetements,
           })
         }
         return entry

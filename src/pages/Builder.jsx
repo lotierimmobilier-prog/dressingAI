@@ -272,7 +272,7 @@ function PhotoScan() {
             <span className="text-sm text-muted">Prends ou choisis une photo d’une pièce</span>
           </>
         )}
-        <input type="file" accept="image/*" capture="environment" className="hidden" onChange={onFile} />
+        <input type="file" accept="image/*" className="hidden" onChange={onFile} />
       </label>
 
       {analyzing && (
