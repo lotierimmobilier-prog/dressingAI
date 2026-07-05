@@ -243,10 +243,12 @@ const DEMO_PHOTOS = {
   [uid(12)]: U('1588850561407-ed78c282e89b'), // casquette noire
 }
 
+// Préfixe le chemin de base (ex. '/dressingai/') pour les assets locaux.
+const BASE = import.meta.env.BASE_URL
 export const DEMO_VETEMENTS = RAW_VETEMENTS.map((v) => ({
   ...v,
-  photo_url: DEMO_PHOTOS[v.id] || `/demo/${v.id}.png`,
-  photo_fallback: `/demo/${v.id}.png`,
+  photo_url: DEMO_PHOTOS[v.id] || `${BASE}demo/${v.id}.png`,
+  photo_fallback: `${BASE}demo/${v.id}.png`,
 }))
 
 export const DEMO_HISTORIQUE = [

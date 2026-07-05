@@ -2,8 +2,13 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 
+// Chemin de base : '/' à la racine, ou '/dressingai/' pour un sous-dossier.
+// Défini via VITE_BASE au build (voir Dockerfile / docker-compose).
+const base = process.env.VITE_BASE || '/'
+
 // https://vitejs.dev/config/
 export default defineConfig({
+  base,
   plugins: [
     react(),
     VitePWA({
@@ -17,7 +22,9 @@ export default defineConfig({
         background_color: '#0D0D0D',
         display: 'standalone',
         orientation: 'portrait',
-        start_url: '/',
+        id: base,
+        start_url: base,
+        scope: base,
         icons: [
           {
             src: 'pwa-192.png',

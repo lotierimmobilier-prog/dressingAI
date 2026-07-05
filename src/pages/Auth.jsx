@@ -32,7 +32,7 @@ export default function Auth() {
           animate={{ opacity: 1, y: 0 }}
           className="mb-8 text-center"
         >
-          <img src="/favicon.svg" alt="" className="mx-auto mb-4 h-20 w-20 drop-shadow-glow" />
+          <img src={`${import.meta.env.BASE_URL}favicon.svg`} alt="" className="mx-auto mb-4 h-20 w-20 drop-shadow-glow" />
           <h1 className="font-display text-5xl font-bold tracking-tight">
             <span className="text-cream">Dressing</span>
             <span className="text-gradient">AI</span>
