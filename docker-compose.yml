@@ -14,6 +14,8 @@ services:
         VITE_OPENWEATHER_API_KEY: ${VITE_OPENWEATHER_API_KEY:-}
         VITE_CLAUDE_PROXY: ${VITE_CLAUDE_PROXY:-}
         VITE_BASE: ${VITE_BASE:-/}
+        VITE_AMAZON_TAG: ${VITE_AMAZON_TAG:-}
+        VITE_AWIN_ID: ${VITE_AWIN_ID:-}
     image: dressingai:latest
     container_name: dressingai
     restart: unless-stopped

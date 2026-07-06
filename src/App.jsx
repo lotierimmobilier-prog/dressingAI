@@ -15,6 +15,7 @@ import Historique from './pages/Historique'
 import StyleTwin from './pages/StyleTwin'
 import Capsule from './pages/Capsule'
 import Semaine from './pages/Semaine'
+import Shop from './pages/Shop'
 import Profil from './pages/Profil'
 
 export default function App() {
@@ -59,6 +60,7 @@ export default function App() {
           <Route path="/style-twin" element={<StyleTwin />} />
           <Route path="/capsule" element={<Capsule />} />
           <Route path="/semaine" element={<Semaine />} />
+          <Route path="/shop" element={<Shop />} />
           <Route path="/profil" element={<Profil />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

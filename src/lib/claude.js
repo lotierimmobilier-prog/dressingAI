@@ -114,6 +114,20 @@ export async function analyzeClothing(file) {
   return extractJSON(text)
 }
 
+/**
+ * Analyse une capture d'écran d'un look (Pinterest, TikTok, Google…) et
+ * détecte chaque pièce, avec une requête de recherche shopping optimisée.
+ */
+export async function analyzeLook(file) {
+  const imageBlock = await fileToImageBlock(file)
+  const prompt = `Analyse cette image d'inspiration mode (capture d'écran, photo de look). Identifie CHAQUE pièce vestimentaire portée. Pour chacune, propose une requête de recherche shopping efficace (marque si visible, matière, coupe, couleur). Return ONLY JSON: { "pieces": [ { "nom": "nom court en français", "categorie": "haut|bas|robe|chaussures|accessoire|manteau", "couleur": "couleur en français", "couleur_hex": "#XXXXXX", "description_recherche": "requête shopping optimisée", "prix_estime_min": nombre_euros, "prix_estime_max": nombre_euros } ] } No markdown, only JSON.`
+  const text = await callClaude({
+    content: [imageBlock, { type: 'text', text: prompt }],
+    maxTokens: 1000,
+  })
+  return extractJSON(text)
+}
+
 /** Suggère 3 tenues depuis le dressing selon l'humeur / météo / palette. */
 export async function suggestOutfits({ dressing, humeur, temp, condition, couleurs }) {
   const prompt = `Tu es un styliste expert. L'utilisateur a ces vêtements disponibles : ${JSON.stringify(

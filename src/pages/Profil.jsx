@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { LogOut, Users, Mail, ChevronRight, Trophy, Wand2, Shirt, CalendarRange, Info } from 'lucide-react'
+import { LogOut, Users, Mail, ChevronRight, Trophy, Wand2, Shirt, CalendarRange, Info, ShoppingBag } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import PageTransition from '../components/layout/PageTransition'
 import Modal from '../components/ui/Modal'
@@ -12,6 +12,7 @@ import { isSupabaseConfigured } from '../lib/supabase'
 import { isClaudeConfigured } from '../lib/claude'
 
 const SHORTCUTS = [
+  { to: '/shop', icon: ShoppingBag, label: 'Shopper un look', desc: 'Capture → boutiques', color: '#E8C547' },
   { to: '/style-twin', icon: Wand2, label: 'Style Twin', desc: 'Ton alter ego mode', color: '#FF6B6B' },
   { to: '/capsule', icon: Shirt, label: 'Capsule Wardrobe', desc: '10 pièces, X tenues', color: '#A8E6CF' },
   { to: '/semaine', icon: CalendarRange, label: 'Ma semaine', desc: 'Météo + tenues 7j', color: '#8B7CF0' },

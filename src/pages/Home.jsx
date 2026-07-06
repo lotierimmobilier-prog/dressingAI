@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { MapPin, Loader2, Sparkles, Palette, Camera, Shirt } from 'lucide-react'
+import { MapPin, Loader2, Sparkles, Palette, Camera, Shirt, ShoppingBag } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import MirrorBackground from '../components/layout/MirrorBackground'
 import PageTransition from '../components/layout/PageTransition'
@@ -189,6 +189,22 @@ export default function Home() {
             <SlotMachine dressing={items} onResult={() => reward('wear_outfit')} />
           </section>
         )}
+
+        {/* Shopper un look (capture → boutiques) */}
+        <button
+          onClick={() => navigate('/shop')}
+          className="mb-6 flex w-full items-center gap-4 rounded-3xl border border-white/10 bg-gradient-to-r from-accent/15 to-coral/10 p-4 text-left"
+        >
+          <div className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-accent text-bg">
+            <ShoppingBag size={22} />
+          </div>
+          <div className="min-w-0">
+            <p className="font-display">Shopper un look 🛍️</p>
+            <p className="text-sm text-muted">
+              Une capture Pinterest/TikTok → l’IA trouve les pièces en boutique.
+            </p>
+          </div>
+        </button>
 
         {/* Couleur du moment */}
         <section
