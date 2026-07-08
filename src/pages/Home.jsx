@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { MapPin, Loader2, Sparkles, Palette, Camera, Shirt, ShoppingBag, Check } from 'lucide-react'
+import { MapPin, Loader2, Sparkles, Palette, Camera, Shirt, ShoppingBag, Check, Plus, X } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import MirrorBackground from '../components/layout/MirrorBackground'
 import PageTransition from '../components/layout/PageTransition'
@@ -81,6 +81,15 @@ export default function Home() {
       return [...cur, c]
     })
 
+  // Sélecteur libre : ajoute une couleur personnalisée à la palette.
+  const addCustom = (c) =>
+    setPalette((cur) => {
+      if (cur.includes(c)) return cur
+      if (cur.length >= 4) return [...cur.slice(1), c]
+      return [...cur, c]
+    })
+  const removeColor = (c) => setPalette((cur) => cur.filter((x) => x !== c))
+
   return (
     <MirrorBackground tint={tint}>
       <PageTransition className="px-4 pt-8">
@@ -149,8 +158,39 @@ export default function Home() {
                 </button>
               )
             })}
+            {/* Sélecteur libre (couleur personnalisée) */}
+            <label
+              className="relative grid aspect-square cursor-pointer place-items-center rounded-xl border border-dashed border-white/25 text-muted"
+              title="Couleur personnalisée"
+            >
+              <Plus size={16} />
+              <input
+                type="color"
+                onChange={(e) => addCustom(e.target.value)}
+                className="absolute inset-0 cursor-pointer opacity-0"
+              />
+            </label>
           </div>
-          <p className="mt-2 label-mono">Touche pour choisir tes couleurs du jour</p>
+          <p className="mt-2 label-mono">Touche une couleur (ou + pour une couleur libre)</p>
+
+          {/* Aperçu de la palette choisie — tap pour retirer */}
+          {palette.length > 0 && (
+            <div className="mt-3 flex flex-wrap gap-2">
+              {palette.map((c) => (
+                <button
+                  key={c}
+                  onClick={() => removeColor(c)}
+                  className="group relative h-8 w-8 rounded-full border border-white/15"
+                  style={{ background: c }}
+                  title="Retirer"
+                >
+                  <span className="absolute inset-0 grid place-items-center rounded-full bg-black/40 opacity-0 transition group-hover:opacity-100">
+                    <X size={13} className="text-cream" />
+                  </span>
+                </button>
+              ))}
+            </div>
+          )}
         </section>
 
         {/* Suggestions IA */}
