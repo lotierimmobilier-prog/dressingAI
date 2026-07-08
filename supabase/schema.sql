@@ -16,8 +16,11 @@ create table if not exists user_profiles (
   budget_moyen int,
   points int default 0,
   badges text[] default '{}',
+  mensurations jsonb default '{}'::jsonb,
   created_at timestamptz default now()
 );
+-- Ajout idempotent pour les bases déjà créées avant cette colonne :
+alter table user_profiles add column if not exists mensurations jsonb default '{}'::jsonb;
 
 -- ---------- Vêtements ----------
 create table if not exists vetements (

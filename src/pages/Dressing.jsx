@@ -169,12 +169,12 @@ export default function Dressing() {
       )}
 
       {/* Modal ajout */}
-      <Modal open={addOpen} onClose={() => setAddOpen(false)} title="Ajouter un vêtement">
+      <Modal open={addOpen} onClose={() => setAddOpen(false)} title="Ajouter un vêtement" fullScreenMobile>
         <AddClothingForm userId={user?.id} onSave={handleSave} onColors={setConfettiColors} />
       </Modal>
 
       {/* Modal fiche / édition (tap sur une pièce) */}
-      <Modal open={!!editItem} onClose={() => setEditItem(null)} title="Modifier la pièce">
+      <Modal open={!!editItem} onClose={() => setEditItem(null)} title="Modifier la pièce" fullScreenMobile>
         {editItem && (
           <AddClothingForm
             userId={user?.id}
