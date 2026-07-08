@@ -1,12 +1,22 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { Camera, Loader2, ArrowLeft, ShoppingBag, ExternalLink, Sparkles, Tag } from 'lucide-react'
+import { Camera, Loader2, ArrowLeft, ShoppingBag, ExternalLink, Sparkles, Tag, Ruler } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import PageTransition from '../components/layout/PageTransition'
 import { analyzeLook, isClaudeConfigured } from '../lib/claude'
 import { RETAILERS, hasAffiliate } from '../lib/affiliate'
 import { tileGradient } from '../lib/colors'
 import { haptic } from '../hooks/useGameification'
+import { useAuthStore } from '../stores/authStore'
+
+/** Ajoute la taille/pointure de l'utilisateur à la requête selon la catégorie. */
+function sizeSuffix(categorie, men) {
+  if (!men) return ''
+  if (categorie === 'chaussures') return men.pointure ? `pointure ${men.pointure}` : ''
+  if (categorie === 'bas') return men.taille_bas ? `taille ${men.taille_bas}` : ''
+  // haut / robe / manteau / accessoire → taille haut (lettre)
+  return men.taille_haut ? `taille ${men.taille_haut}` : ''
+}
 
 // Exemple montré quand l'IA n'est pas active (pour visualiser le concept).
 const DEMO_PIECES = [
@@ -17,6 +27,10 @@ const DEMO_PIECES = [
 
 export default function Shop() {
   const navigate = useNavigate()
+  const profile = useAuthStore((s) => s.profile)
+  const mensurations = profile?.mensurations || {}
+  const hasSizes = Boolean(mensurations.taille_haut || mensurations.taille_bas || mensurations.pointure)
+  const [useSizes, setUseSizes] = useState(true)
   const [preview, setPreview] = useState(null)
   const [loading, setLoading] = useState(false)
   const [pieces, setPieces] = useState(null)
@@ -46,7 +60,10 @@ export default function Shop() {
     }
   }
 
-  function openShop(retailer, query) {
+  function openShop(retailer, piece) {
+    const base = piece.description_recherche || piece.nom
+    const suffix = useSizes && hasSizes ? sizeSuffix(piece.categorie, mensurations) : ''
+    const query = [base, suffix].filter(Boolean).join(' ')
     haptic([10, 20])
     window.open(retailer.build(query), '_blank', 'noopener,noreferrer')
   }
@@ -90,6 +107,23 @@ export default function Shop() {
             {demo && <span className="label-mono text-mint">exemple</span>}
           </div>
 
+          {/* Taille pré-remplie depuis le profil */}
+          {hasSizes ? (
+            <button
+              onClick={() => setUseSizes((v) => !v)}
+              className={`chip w-fit ${useSizes ? 'border-accent/50 bg-accent/20 text-accent' : ''}`}
+            >
+              <Ruler size={13} /> {useSizes ? 'Ma taille incluse ✓' : 'Inclure ma taille'}
+            </button>
+          ) : (
+            <button
+              onClick={() => navigate('/mes-tailles')}
+              className="flex w-fit items-center gap-1.5 text-xs text-accent underline-offset-2 hover:underline"
+            >
+              <Ruler size={13} /> Renseigne tes tailles pour des recherches plus précises
+            </button>
+          )}
+
           {pieces.map((p, i) => (
             <motion.div
               key={i}
@@ -115,7 +149,7 @@ export default function Shop() {
                 {RETAILERS.map((r) => (
                   <button
                     key={r.id}
-                    onClick={() => openShop(r, p.description_recherche || p.nom)}
+                    onClick={() => openShop(r, p)}
                     className="flex items-center justify-between gap-1 rounded-xl border border-white/10 bg-surface-2 px-3 py-2.5 text-sm transition hover:border-white/25"
                   >
                     <span className="flex items-center gap-2">

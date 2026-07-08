@@ -102,7 +102,7 @@ export default function AddClothingForm({ userId, onSave, onColors, initial = nu
             <img
               src={preview}
               alt={form.nom}
-              className="aspect-[4/3] w-full object-cover"
+              className="h-40 w-full object-cover"
               onError={(e) => {
                 const t = e.currentTarget
                 if (!t.dataset.fb && initial?.photo_fallback) {
@@ -113,7 +113,7 @@ export default function AddClothingForm({ userId, onSave, onColors, initial = nu
             />
           ) : (
             <div
-              className="grid aspect-[4/3] w-full place-items-center text-7xl"
+              className="grid h-40 w-full place-items-center text-6xl"
               style={{ color: readableText(form.couleur_hex || '#888') }}
             >
               {CATEGORIES.find((c) => c.id === form.categorie)?.emoji || '👗'}
