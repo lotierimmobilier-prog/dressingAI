@@ -96,6 +96,14 @@ export const MOTIFS_TENDANCE = [
     },
   },
   {
+    id: 'rayures',
+    nom: 'Rayures',
+    recherche: 'rayé marinière',
+    pattern: {
+      backgroundImage: 'repeating-linear-gradient(90deg, #26364A 0 6px, #F5F5F0 6px 12px)',
+    },
+  },
+  {
     id: 'vichy',
     nom: 'Vichy',
     recherche: 'vichy',
@@ -106,14 +114,7 @@ export const MOTIFS_TENDANCE = [
       backgroundSize: '9px 9px',
     },
   },
-  {
-    id: 'rayures',
-    nom: 'Rayures',
-    recherche: 'rayé marinière',
-    pattern: {
-      backgroundImage: 'repeating-linear-gradient(90deg, #26364A 0 6px, #F5F5F0 6px 12px)',
-    },
-  },
+  { id: 'fleuri', nom: 'Fleuri', recherche: 'fleuri liberty', emoji: '🌸' },
   {
     id: 'carreaux',
     nom: 'Carreaux',
@@ -124,6 +125,5 @@ export const MOTIFS_TENDANCE = [
         'repeating-linear-gradient(0deg, rgba(255,255,255,.35) 0 2px, transparent 2px 12px), repeating-linear-gradient(90deg, rgba(255,255,255,.35) 0 2px, transparent 2px 12px)',
     },
   },
-  { id: 'fleuri', nom: 'Fleuri', recherche: 'fleuri liberty', emoji: '🌸' },
   { id: 'leopard', nom: 'Léopard', recherche: 'imprimé léopard', emoji: '🐆' },
 ]

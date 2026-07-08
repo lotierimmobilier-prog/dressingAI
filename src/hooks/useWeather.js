@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 const API_KEY = import.meta.env.VITE_OPENWEATHER_API_KEY
+const CITY_KEY = 'dressingai.weather.city'
 
 const CONDITION_EMOJI = {
   Clear: '☀️',
@@ -23,13 +24,48 @@ const DEMO_WEATHER = {
   demo: true,
 }
 
+/** Ville choisie manuellement, persistée en localStorage (précision météo). */
+function readCity() {
+  try {
+    return localStorage.getItem(CITY_KEY) || ''
+  } catch {
+    return ''
+  }
+}
+
+function normalizeWeather(data) {
+  const main = data.weather?.[0]?.main
+  return {
+    temp: Math.round(data.main.temp),
+    condition: main,
+    emoji: CONDITION_EMOJI[main] || '🌤️',
+    ville: data.name,
+    description: data.weather?.[0]?.description || '',
+  }
+}
+
 /**
- * Récupère la météo géolocalisée via OpenWeatherMap.
- * Fallback démo si pas de clé ou géoloc refusée.
+ * Récupère la météo via OpenWeatherMap.
+ * - Si l'utilisateur a indiqué une ville → recherche par nom (plus précis).
+ * - Sinon → géolocalisation.
+ * - Fallback démo si pas de clé, ville introuvable ou géoloc refusée.
+ * Renvoie aussi `city` / `setCity` pour piloter la ville depuis l'UI.
  */
 export function useWeather() {
   const [weather, setWeather] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [city, setCityState] = useState(readCity)
+
+  const setCity = useCallback((value) => {
+    const clean = (value || '').trim()
+    try {
+      if (clean) localStorage.setItem(CITY_KEY, clean)
+      else localStorage.removeItem(CITY_KEY)
+    } catch {
+      /* stockage indisponible : on garde juste l'état en mémoire */
+    }
+    setCityState(clean)
+  }, [])
 
   useEffect(() => {
     let cancelled = false
@@ -38,15 +74,16 @@ export function useWeather() {
       const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&lang=fr&appid=${API_KEY}`
       const res = await fetch(url)
       if (!res.ok) throw new Error('weather error')
-      const data = await res.json()
-      const main = data.weather?.[0]?.main
-      return {
-        temp: Math.round(data.main.temp),
-        condition: main,
-        emoji: CONDITION_EMOJI[main] || '🌤️',
-        ville: data.name,
-        description: data.weather?.[0]?.description || '',
-      }
+      return normalizeWeather(await res.json())
+    }
+
+    async function fetchByCity(name) {
+      const url = `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(
+        name,
+      )}&units=metric&lang=fr&appid=${API_KEY}`
+      const res = await fetch(url)
+      if (!res.ok) throw new Error('weather error')
+      return normalizeWeather(await res.json())
     }
 
     function done(w) {
@@ -56,7 +93,26 @@ export function useWeather() {
       }
     }
 
-    if (!API_KEY || !navigator.geolocation) {
+    if (!cancelled) setLoading(true)
+
+    if (!API_KEY) {
+      done(city ? { ...DEMO_WEATHER, ville: city } : DEMO_WEATHER)
+      return () => {
+        cancelled = true
+      }
+    }
+
+    // Ville renseignée → recherche par nom (prioritaire, plus précis).
+    if (city) {
+      fetchByCity(city)
+        .then(done)
+        .catch(() => done({ ...DEMO_WEATHER, ville: city }))
+      return () => {
+        cancelled = true
+      }
+    }
+
+    if (!navigator.geolocation) {
       done(DEMO_WEATHER)
       return () => {
         cancelled = true
@@ -78,9 +134,9 @@ export function useWeather() {
     return () => {
       cancelled = true
     }
-  }, [])
+  }, [city])
 
-  return { weather, loading }
+  return { weather, loading, city, setCity }
 }
 
 /** Prévisions 7 jours (démo générative si pas de clé). */

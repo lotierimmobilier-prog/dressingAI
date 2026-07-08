@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { MapPin, Loader2, Sparkles, Palette, Camera, Shirt, ShoppingBag, Check, Plus } from 'lucide-react'
+import { MapPin, Navigation, Loader2, Sparkles, Palette, Camera, Shirt, ShoppingBag, Check, Plus } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import MirrorBackground from '../components/layout/MirrorBackground'
 import PageTransition from '../components/layout/PageTransition'
@@ -11,7 +11,7 @@ import { useWeather } from '../hooks/useWeather'
 import { useAuthStore } from '../stores/authStore'
 import { useWardrobeStore } from '../stores/wardrobeStore'
 import { useOutfitStore } from '../stores/outfitStore'
-import { useGameification } from '../hooks/useGameification'
+import { useGameification, haptic } from '../hooks/useGameification'
 import { generateOutfits } from '../lib/outfitEngine'
 import { suggestOutfits, isClaudeConfigured } from '../lib/claude'
 import { buildVintedUrl } from '../lib/vintedUrl'
@@ -22,7 +22,7 @@ const PALETTE_PRESETS = ['#0D0D0D', '#F5F5F0', '#D9C7A8', '#E8C547', '#FF6B6B', 
 
 export default function Home() {
   const navigate = useNavigate()
-  const { weather, loading } = useWeather()
+  const { weather, loading, city, setCity } = useWeather()
   const profile = useAuthStore((s) => s.profile)
   const user = useAuthStore((s) => s.user)
   const items = useWardrobeStore((s) => s.items)
@@ -103,7 +103,7 @@ export default function Home() {
             <p className="label-mono">Bonjour {profile?.avatar_emoji}</p>
             <h1 className="font-display text-3xl">{profile?.prenom || 'toi'}</h1>
           </div>
-          <WeatherBadge weather={weather} loading={loading} />
+          <WeatherBadge weather={weather} loading={loading} city={city} setCity={setCity} />
         </header>
 
         {/* Accueil nouveau compte : dressing vide */}
@@ -275,15 +275,12 @@ export default function Home() {
           <p className="mb-3 text-sm text-muted">Touche un motif pour le trouver en boutique.</p>
           <div className="no-scrollbar -mx-1 flex gap-3 overflow-x-auto px-1 pb-1">
             {MOTIFS_TENDANCE.map((m) => (
-              <button
+              <a
                 key={m.id}
-                onClick={() =>
-                  window.open(
-                    buildVintedUrl({ description: m.recherche }),
-                    '_blank',
-                    'noopener,noreferrer',
-                  )
-                }
+                href={buildVintedUrl({ description: m.recherche })}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => haptic()}
                 className="w-[72px] shrink-0"
               >
                 <div
@@ -293,7 +290,7 @@ export default function Home() {
                   {!m.pattern && <span>{m.emoji}</span>}
                 </div>
                 <p className="mt-1 text-center text-xs text-cream/90">{m.nom}</p>
-              </button>
+              </a>
             ))}
           </div>
         </section>
@@ -302,7 +299,10 @@ export default function Home() {
   )
 }
 
-function WeatherBadge({ weather, loading }) {
+function WeatherBadge({ weather, loading, city, setCity }) {
+  const [editing, setEditing] = useState(false)
+  const [draft, setDraft] = useState(city || '')
+
   if (loading) {
     return (
       <div className="glass rounded-2xl px-3 py-2">
@@ -311,8 +311,56 @@ function WeatherBadge({ weather, loading }) {
     )
   }
   if (!weather) return null
+
+  function submit(e) {
+    e.preventDefault()
+    setCity(draft)
+    setEditing(false)
+  }
+
+  function openEditor() {
+    setDraft(city || '')
+    setEditing(true)
+    haptic()
+  }
+
+  if (editing) {
+    return (
+      <form onSubmit={submit} className="glass w-44 rounded-2xl p-2.5">
+        <p className="label-mono mb-1.5 flex items-center gap-1">
+          <MapPin size={10} /> Ta ville
+        </p>
+        <input
+          autoFocus
+          value={draft}
+          onChange={(e) => setDraft(e.target.value)}
+          placeholder="Ex. Lyon"
+          className="w-full rounded-xl bg-white/5 px-2.5 py-1.5 text-sm text-cream placeholder:text-muted focus:outline-none focus:ring-1 focus:ring-accent"
+        />
+        <div className="mt-2 flex items-center gap-1.5">
+          <button type="submit" className="flex-1 rounded-xl bg-accent py-1.5 text-xs font-medium text-bg">
+            OK
+          </button>
+          {city && (
+            <button
+              type="button"
+              onClick={() => {
+                setCity('')
+                setEditing(false)
+              }}
+              title="Utiliser ma position"
+              className="grid h-7 w-7 place-items-center rounded-xl bg-white/5 text-muted"
+            >
+              <Navigation size={13} />
+            </button>
+          )}
+        </div>
+      </form>
+    )
+  }
+
   return (
-    <div className="glass rounded-2xl px-3.5 py-2 text-right">
+    <button onClick={openEditor} className="glass rounded-2xl px-3.5 py-2 text-right" title="Changer de ville">
       <div className="flex items-center gap-1.5">
         <span className="text-xl">{weather.emoji}</span>
         <span className="font-display text-xl">{weather.temp}°</span>
@@ -320,6 +368,6 @@ function WeatherBadge({ weather, loading }) {
       <p className="label-mono flex items-center justify-end gap-1">
         <MapPin size={10} /> {weather.ville}
       </p>
-    </div>
+    </button>
   )
 }
