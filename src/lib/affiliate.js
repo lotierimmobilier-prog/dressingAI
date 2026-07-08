@@ -14,11 +14,29 @@ import { getAffiliateConfig } from './affiliateConfig'
 
 const enc = (s) => encodeURIComponent(s || '')
 
-/** Ajoute un paramètre de suivi d'affiliation (ex: "aff_id=123") à une URL. */
-function withParam(url, param) {
-  const p = (param || '').replace(/^[?&]+/, '').trim()
-  if (!p) return url
-  return `${url}${url.includes('?') ? '&' : '?'}${p}`
+/**
+ * Query string de suivi à ajouter, à partir SOIT d'un paramètre "clé=valeur"
+ * (ex: "aff_id=123"), SOIT d'un lien d'affiliation complet collé tel quel
+ * (ex: "https://fr.shein.com/...?ref=6NU4K" → on récupère "ref=6NU4K").
+ */
+function trackingQuery(value) {
+  const v = (value || '').trim()
+  if (!v) return ''
+  if (/^https?:\/\//i.test(v)) {
+    try {
+      return new URL(v).search.replace(/^\?/, '')
+    } catch {
+      return ''
+    }
+  }
+  return v.replace(/^[?&]+/, '')
+}
+
+/** Ajoute le suivi d'affiliation à une URL de recherche boutique. */
+function withParam(url, value) {
+  const q = trackingQuery(value)
+  if (!q) return url
+  return `${url}${url.includes('?') ? '&' : '?'}${q}`
 }
 
 /**

@@ -7,9 +7,9 @@ import { haptic } from '../hooks/useGameification'
 
 // Boutiques en affiliation directe (paramètre de suivi collé depuis leur programme).
 const DIRECT_SHOPS = [
-  { key: 'shein', label: 'Shein', color: '#111111', example: 'aff_id=12345' },
-  { key: 'zalando', label: 'Zalando', color: '#FF6900', example: 'wmc=abcde' },
-  { key: 'asos', label: 'ASOS', color: '#2D2D2D', example: 'affid=12345' },
+  { key: 'shein', label: 'Shein', color: '#111111', example: 'ton lien Shein, ou ref=6NU4K' },
+  { key: 'zalando', label: 'Zalando', color: '#FF6900', example: 'ton lien Zalando, ou wmc=abcde' },
+  { key: 'asos', label: 'ASOS', color: '#2D2D2D', example: 'ton lien ASOS, ou affid=12345' },
 ]
 
 export default function Affiliation() {
@@ -65,9 +65,9 @@ export default function Affiliation() {
       <section className="card mb-4 p-5">
         <h2 className="mb-1 font-display">Boutiques en direct</h2>
         <p className="mb-4 text-sm text-muted">
-          Inscris-toi au programme d’affiliation de chaque boutique (cherche « programme
-          d’affiliation / affiliate » sur leur site), puis colle ici le{' '}
-          <b className="text-cream">paramètre de suivi</b> qu’ils te donnent — au format{' '}
+          Inscris-toi au programme d’affiliation de chaque boutique, puis colle ici soit ton{' '}
+          <b className="text-cream">lien d’affiliation complet</b> (l’app en extrait le suivi
+          automatiquement), soit le <b className="text-cream">paramètre</b> seul au format{' '}
           <code className="text-cream">clé=valeur</code>.
         </p>
         <div className="grid gap-3">
@@ -78,7 +78,7 @@ export default function Affiliation() {
               </label>
               <input
                 className="input mt-1"
-                placeholder={`ex. ${s.example}`}
+                placeholder={s.example}
                 value={cfg[s.key]}
                 onChange={(e) => update({ [s.key]: e.target.value.trim() })}
               />
