@@ -17,6 +17,7 @@ import Capsule from './pages/Capsule'
 import Semaine from './pages/Semaine'
 import Shop from './pages/Shop'
 import MesTailles from './pages/MesTailles'
+import Affiliation from './pages/Affiliation'
 import Profil from './pages/Profil'
 
 export default function App() {
@@ -63,6 +64,7 @@ export default function App() {
           <Route path="/semaine" element={<Semaine />} />
           <Route path="/shop" element={<Shop />} />
           <Route path="/mes-tailles" element={<MesTailles />} />
+          <Route path="/affiliation" element={<Affiliation />} />
           <Route path="/profil" element={<Profil />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

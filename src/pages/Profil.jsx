@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { LogOut, Users, Mail, ChevronRight, Trophy, Wand2, Shirt, CalendarRange, Info, ShoppingBag, Palette, Check, Plus, Ruler } from 'lucide-react'
+import { LogOut, Users, Mail, ChevronRight, Trophy, Wand2, Shirt, CalendarRange, Info, ShoppingBag, Palette, Check, Plus, Ruler, Wallet } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import PageTransition from '../components/layout/PageTransition'
 import Modal from '../components/ui/Modal'
@@ -15,6 +15,7 @@ import { ACCENT_PRESETS, getAccent, setAccent, DEFAULT_ACCENT } from '../lib/the
 const SHORTCUTS = [
   { to: '/mes-tailles', icon: Ruler, label: 'Mes tailles', desc: 'Tailles, pointure, mesures', color: '#7FA6C9' },
   { to: '/shop', icon: ShoppingBag, label: 'Shopper un look', desc: 'Capture → boutiques', color: '#E8C547' },
+  { to: '/affiliation', icon: Wallet, label: 'Monétisation', desc: 'Tes liens d’affiliation', color: '#8FD4A8' },
   { to: '/style-twin', icon: Wand2, label: 'Style Twin', desc: 'Ton alter ego mode', color: '#FF6B6B' },
   { to: '/capsule', icon: Shirt, label: 'Capsule Wardrobe', desc: '10 pièces, X tenues', color: '#A8E6CF' },
   { to: '/semaine', icon: CalendarRange, label: 'Ma semaine', desc: 'Météo + tenues 7j', color: '#8B7CF0' },

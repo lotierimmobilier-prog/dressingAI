@@ -227,7 +227,17 @@ export default function Shop() {
             <p>
               Certains liens sont affiliés : si tu achètes via ces liens, DressingAI peut
               percevoir une commission, sans surcoût pour toi.
-              {!hasAffiliate && ' (Affiliation non encore configurée.)'}
+              {!hasAffiliate() && (
+                <>
+                  {' '}
+                  <button
+                    onClick={() => navigate('/affiliation')}
+                    className="text-accent underline-offset-2 hover:underline"
+                  >
+                    Configurer mes liens d’affiliation →
+                  </button>
+                </>
+              )}
             </p>
           </div>
         </div>
