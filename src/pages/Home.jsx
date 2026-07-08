@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { MapPin, Loader2, Sparkles, Palette, Camera, Shirt, ShoppingBag } from 'lucide-react'
+import { MapPin, Loader2, Sparkles, Palette, Camera, Shirt, ShoppingBag, Check } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import MirrorBackground from '../components/layout/MirrorBackground'
 import PageTransition from '../components/layout/PageTransition'
@@ -15,7 +15,7 @@ import { useGameification } from '../hooks/useGameification'
 import { generateOutfits } from '../lib/outfitEngine'
 import { suggestOutfits, isClaudeConfigured } from '../lib/claude'
 import { buildVintedUrl } from '../lib/vintedUrl'
-import { COULEUR_DU_MOMENT } from '../lib/constants'
+import { COULEUR_DU_MOMENT, COLOR_WHEEL } from '../lib/constants'
 
 export default function Home() {
   const navigate = useNavigate()
@@ -73,6 +73,14 @@ export default function Home() {
 
   const current = outfits[index]
 
+  // Sélection multiple de couleurs (max 4) : remplace la plus ancienne au-delà.
+  const toggleColor = (c) =>
+    setPalette((cur) => {
+      if (cur.includes(c)) return cur.filter((x) => x !== c)
+      if (cur.length >= 4) return [...cur.slice(1), c]
+      return [...cur, c]
+    })
+
   return (
     <MirrorBackground tint={tint}>
       <PageTransition className="px-4 pt-8">
@@ -111,24 +119,38 @@ export default function Home() {
           <MoodSelector value={mood?.id} onChange={selectMood} />
         </section>
 
-        {/* Palette du jour */}
+        {/* Palette du jour — choisis tes couleurs */}
         <section className="mb-6">
           <div className="mb-2 flex items-center gap-2">
             <Palette size={16} className="text-muted" />
             <p className="label-mono">Palette du jour</p>
+            <span className="label-mono ml-auto">{palette.length}/4</span>
           </div>
-          <div className="flex gap-3">
-            {palette.map((c, i) => (
-              <label key={i} className="relative">
-                <input
-                  type="color"
-                  value={c}
-                  onChange={(e) => setPalette((p) => p.map((x, j) => (j === i ? e.target.value : x)))}
-                  className="h-11 w-16 cursor-pointer rounded-xl border border-white/10 bg-transparent"
-                />
-              </label>
-            ))}
+          <div className="grid grid-cols-8 gap-2">
+            {COLOR_WHEEL.map((c) => {
+              const on = palette.includes(c)
+              return (
+                <button
+                  key={c}
+                  onClick={() => toggleColor(c)}
+                  aria-label={`Couleur ${c}`}
+                  className="relative aspect-square rounded-xl border border-white/10 transition"
+                  style={{
+                    background: c,
+                    transform: on ? 'scale(1.12)' : 'scale(1)',
+                    boxShadow: on ? `0 0 0 2px ${c}, 0 0 12px ${c}aa` : 'none',
+                  }}
+                >
+                  {on && (
+                    <span className="absolute inset-0 grid place-items-center">
+                      <Check size={13} className="text-bg mix-blend-difference" />
+                    </span>
+                  )}
+                </button>
+              )
+            })}
           </div>
+          <p className="mt-2 label-mono">Touche pour choisir tes couleurs du jour</p>
         </section>
 
         {/* Suggestions IA */}
