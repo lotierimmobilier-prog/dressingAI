@@ -81,19 +81,49 @@ export const COULEUR_DU_MOMENT = {
   note: 'La couleur qui réveille tes basiques et capte la lumière d’été.',
 }
 
-// Motif tendance ("Motif du Moment") — basé sur les tendances imprimés
-// Été 2026 (défilés + presse mode) : le vichy fait son grand retour.
-export const MOTIF_DU_MOMENT = {
-  nom: 'Vichy (gingham)',
-  saison: 'Tendance Été 2026',
-  note: 'Le grand retour de l’été : robes, tops et jupes légères façon pique-nique chic.',
-  recherche: 'robe vichy',
-  alternatives: ['Pois', 'Rayures', 'Fleurs aquarelle', 'Carreaux/Plaid'],
-  // Aperçu du motif rendu en CSS (pas d’image).
-  pattern: {
-    backgroundColor: '#F5F5F0',
-    backgroundImage:
-      'linear-gradient(rgba(255,107,107,0.55) 50%, transparent 50%), linear-gradient(90deg, rgba(255,107,107,0.55) 50%, transparent 50%)',
-    backgroundSize: '9px 9px',
+// Motifs tendance ("Motifs du Moment") — basés sur les tendances imprimés
+// Été 2026 (défilés + presse mode). Les POIS sont la tendance n°1 du moment.
+// Aperçu rendu en CSS (pattern) ou emoji quand le motif est trop complexe.
+export const MOTIFS_TENDANCE = [
+  {
+    id: 'pois',
+    nom: 'Pois',
+    recherche: 'à pois',
+    pattern: {
+      backgroundColor: '#F5F5F0',
+      backgroundImage: 'radial-gradient(#1a1a1a 26%, transparent 28%)',
+      backgroundSize: '11px 11px',
+    },
   },
-}
+  {
+    id: 'vichy',
+    nom: 'Vichy',
+    recherche: 'vichy',
+    pattern: {
+      backgroundColor: '#F5F5F0',
+      backgroundImage:
+        'linear-gradient(rgba(255,107,107,0.55) 50%, transparent 50%), linear-gradient(90deg, rgba(255,107,107,0.55) 50%, transparent 50%)',
+      backgroundSize: '9px 9px',
+    },
+  },
+  {
+    id: 'rayures',
+    nom: 'Rayures',
+    recherche: 'rayé marinière',
+    pattern: {
+      backgroundImage: 'repeating-linear-gradient(90deg, #26364A 0 6px, #F5F5F0 6px 12px)',
+    },
+  },
+  {
+    id: 'carreaux',
+    nom: 'Carreaux',
+    recherche: 'carreaux tartan',
+    pattern: {
+      backgroundColor: '#7A2F2F',
+      backgroundImage:
+        'repeating-linear-gradient(0deg, rgba(255,255,255,.35) 0 2px, transparent 2px 12px), repeating-linear-gradient(90deg, rgba(255,255,255,.35) 0 2px, transparent 2px 12px)',
+    },
+  },
+  { id: 'fleuri', nom: 'Fleuri', recherche: 'fleuri liberty', emoji: '🌸' },
+  { id: 'leopard', nom: 'Léopard', recherche: 'imprimé léopard', emoji: '🐆' },
+]

@@ -15,7 +15,7 @@ import { useGameification } from '../hooks/useGameification'
 import { generateOutfits } from '../lib/outfitEngine'
 import { suggestOutfits, isClaudeConfigured } from '../lib/claude'
 import { buildVintedUrl } from '../lib/vintedUrl'
-import { COULEUR_DU_MOMENT, COLOR_WHEEL, MOTIF_DU_MOMENT } from '../lib/constants'
+import { COULEUR_DU_MOMENT, COLOR_WHEEL, MOTIFS_TENDANCE } from '../lib/constants'
 
 export default function Home() {
   const navigate = useNavigate()
@@ -286,28 +286,32 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Motif du moment (tendance réelle) */}
-        <section className="mb-4 flex items-center gap-4 rounded-3xl border border-white/10 p-4">
-          <div
-            className="h-14 w-14 shrink-0 overflow-hidden rounded-2xl border border-white/10"
-            style={MOTIF_DU_MOMENT.pattern}
-          />
-          <div className="min-w-0">
-            <p className="label-mono">Motif du moment · {MOTIF_DU_MOMENT.saison}</p>
-            <p className="font-display">{MOTIF_DU_MOMENT.nom}</p>
-            <p className="text-sm text-muted">{MOTIF_DU_MOMENT.note}</p>
-            <button
-              onClick={() =>
-                window.open(
-                  buildVintedUrl({ description: MOTIF_DU_MOMENT.recherche }),
-                  '_blank',
-                  'noopener,noreferrer',
-                )
-              }
-              className="mt-1 text-sm text-accent underline-offset-2 hover:underline"
-            >
-              Trouver ce motif sur Vinted →
-            </button>
+        {/* Motifs du moment (tendances réelles) — choisis-en un */}
+        <section className="mb-4 rounded-3xl border border-white/10 p-4">
+          <p className="label-mono mb-1">Motifs du moment · Tendance Été 2026</p>
+          <p className="mb-3 text-sm text-muted">Touche un motif pour le trouver en boutique.</p>
+          <div className="no-scrollbar -mx-1 flex gap-3 overflow-x-auto px-1 pb-1">
+            {MOTIFS_TENDANCE.map((m) => (
+              <button
+                key={m.id}
+                onClick={() =>
+                  window.open(
+                    buildVintedUrl({ description: m.recherche }),
+                    '_blank',
+                    'noopener,noreferrer',
+                  )
+                }
+                className="w-[72px] shrink-0"
+              >
+                <div
+                  className="grid aspect-square w-full place-items-center overflow-hidden rounded-2xl border border-white/10 text-3xl"
+                  style={m.pattern || { background: 'linear-gradient(145deg,#2a2a2a,#161616)' }}
+                >
+                  {!m.pattern && <span>{m.emoji}</span>}
+                </div>
+                <p className="mt-1 text-center text-xs text-cream/90">{m.nom}</p>
+              </button>
+            ))}
           </div>
         </section>
       </PageTransition>
