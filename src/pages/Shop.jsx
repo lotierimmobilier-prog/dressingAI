@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { Camera, Loader2, ArrowLeft, ShoppingBag, ExternalLink, Sparkles, Tag, Ruler } from 'lucide-react'
+import { Camera, Loader2, ArrowLeft, ShoppingBag, ExternalLink, Sparkles, Tag, Ruler, ScanSearch } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import PageTransition from '../components/layout/PageTransition'
 import { analyzeLook, isClaudeConfigured } from '../lib/claude'
@@ -8,6 +8,7 @@ import { RETAILERS, hasAffiliate } from '../lib/affiliate'
 import { tileGradient } from '../lib/colors'
 import { haptic } from '../hooks/useGameification'
 import { useAuthStore } from '../stores/authStore'
+import { uploadClothingPhoto, isSupabaseConfigured } from '../lib/supabase'
 
 /** Ajoute la taille/pointure de l'utilisateur à la requête selon la catégorie. */
 function sizeSuffix(categorie, men) {
@@ -40,11 +41,14 @@ export default function Shop() {
   const profile = useAuthStore((s) => s.profile)
   const mensurations = profile?.mensurations || {}
   const hasSizes = Boolean(mensurations.taille_haut || mensurations.taille_bas || mensurations.pointure)
+  const user = useAuthStore((s) => s.user)
   const [useSizes, setUseSizes] = useState(true)
   const [preview, setPreview] = useState(null)
   const [loading, setLoading] = useState(false)
   const [pieces, setPieces] = useState(null)
   const [demo, setDemo] = useState(false)
+  const [lookUrl, setLookUrl] = useState(null)
+  const canLens = isSupabaseConfigured && user && user.id !== 'demo-user'
 
   async function onFile(e) {
     const file = e.target.files?.[0]
@@ -53,6 +57,13 @@ export default function Shop() {
     setPieces(null)
     setLoading(true)
     setDemo(false)
+    setLookUrl(null)
+    // Upload de la capture → URL publique pour la recherche visuelle Google Lens.
+    if (canLens) {
+      uploadClothingPhoto(user.id, file)
+        .then(setLookUrl)
+        .catch(() => {})
+    }
     try {
       if (isClaudeConfigured) {
         const res = await analyzeLook(file)
@@ -78,6 +89,17 @@ export default function Shop() {
     window.open(retailer.build(query), '_blank', 'noopener,noreferrer')
   }
 
+  /** Recherche visuelle : Google Lens trouve les articles IDENTIQUES en boutique. */
+  function openLens() {
+    if (!lookUrl) return
+    haptic([10, 30])
+    window.open(
+      `https://lens.google.com/uploadbyurl?url=${encodeURIComponent(lookUrl)}`,
+      '_blank',
+      'noopener,noreferrer',
+    )
+  }
+
   return (
     <PageTransition className="px-4 pt-8">
       <button onClick={() => navigate(-1)} className="mb-4 flex items-center gap-1 text-muted">
@@ -101,6 +123,31 @@ export default function Shop() {
         )}
         <input type="file" accept="image/*" className="hidden" onChange={onFile} />
       </label>
+
+      {/* Recherche visuelle — trouve les articles IDENTIQUES (Google Lens) */}
+      {preview && (
+        <div className="mb-6">
+          {canLens ? (
+            <button
+              onClick={openLens}
+              disabled={!lookUrl}
+              className="btn-primary w-full disabled:opacity-60"
+            >
+              {lookUrl ? <ScanSearch size={18} /> : <Loader2 className="animate-spin" size={18} />}
+              {lookUrl ? 'Trouver les articles identiques (Google Lens)' : 'Préparation de la recherche…'}
+            </button>
+          ) : (
+            <p className="flex items-center gap-2 rounded-2xl bg-accent/10 p-3 text-sm text-accent">
+              <ScanSearch size={16} /> Connecte-toi pour la recherche visuelle exacte (Google
+              Lens).
+            </p>
+          )}
+          <p className="mt-2 text-center text-xs text-muted">
+            🔍 La recherche visuelle trouve l’article <b className="text-cream">identique</b> (ou
+            au plus proche) dans les boutiques. En dessous : recherche par mots-clés.
+          </p>
+        </div>
+      )}
 
       {loading && (
         <div className="flex items-center justify-center gap-2 py-6 text-muted">
