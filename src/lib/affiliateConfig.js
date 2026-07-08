@@ -1,14 +1,17 @@
 /**
  * Configuration d'affiliation éditable SANS coder, depuis la page Monétisation.
- * Les valeurs saisies sont stockées en localStorage et priment sur les variables
- * d'environnement (.env). Un champ laissé vide retombe sur la valeur du .env.
+ * Affiliation DIRECTE (pas d'intermédiaire type Awin) : pour chaque boutique on
+ * stocke le paramètre de suivi fourni par son programme d'affiliation
+ * (ex. Amazon → tag ; Shein/Zalando/ASOS → "aff_id=12345", "wmc=abc"…).
+ * Les valeurs saisies dans l'app priment sur les variables d'environnement (.env).
  */
 const KEY = 'dressingai.affiliate'
 
 const ENV_DEFAULTS = {
   amazonTag: import.meta.env.VITE_AMAZON_TAG || '',
-  awinId: import.meta.env.VITE_AWIN_ID || '',
-  awinMid: { shein: '', zalando: '', asos: '' },
+  shein: import.meta.env.VITE_SHEIN_AFF || '',
+  zalando: import.meta.env.VITE_ZALANDO_AFF || '',
+  asos: import.meta.env.VITE_ASOS_AFF || '',
 }
 
 function readStored() {
@@ -22,15 +25,11 @@ function readStored() {
 /** Config effective = ce qui est saisi dans l'app, sinon le .env. */
 export function getAffiliateConfig() {
   const s = readStored()
-  const mid = s.awinMid || {}
   return {
     amazonTag: s.amazonTag || ENV_DEFAULTS.amazonTag,
-    awinId: s.awinId || ENV_DEFAULTS.awinId,
-    awinMid: {
-      shein: mid.shein || ENV_DEFAULTS.awinMid.shein,
-      zalando: mid.zalando || ENV_DEFAULTS.awinMid.zalando,
-      asos: mid.asos || ENV_DEFAULTS.awinMid.asos,
-    },
+    shein: s.shein || ENV_DEFAULTS.shein,
+    zalando: s.zalando || ENV_DEFAULTS.zalando,
+    asos: s.asos || ENV_DEFAULTS.asos,
   }
 }
 

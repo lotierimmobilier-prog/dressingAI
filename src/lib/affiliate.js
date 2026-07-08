@@ -1,22 +1,24 @@
 /**
  * Moteur d'affiliation — construit des liens d'achat traqués vers les boutiques.
  *
- * Les identifiants d'affiliation sont configurables SANS coder depuis la page
- * Monétisation (localStorage), avec repli sur les variables .env :
- *   VITE_AMAZON_TAG   → Amazon Partenaires (ex: "dressingai-21")
- *   VITE_AWIN_ID      → ID éditeur Awin (Shein, Zalando, ASOS… via Awin)
- * Les IDs marchands Awin se renseignent aussi dans la page Monétisation.
+ * Affiliation DIRECTE (sans intermédiaire payant type Awin). Les identifiants se
+ * renseignent SANS coder depuis la page Monétisation (localStorage), avec repli
+ * sur le .env :
+ *   VITE_AMAZON_TAG   → tag Amazon Partenaires (ex: "dressingai-21")
+ *   VITE_SHEIN_AFF    → paramètre de suivi Shein   (ex: "aff_id=12345")
+ *   VITE_ZALANDO_AFF  → paramètre de suivi Zalando (ex: "wmc=abcde")
+ *   VITE_ASOS_AFF     → paramètre de suivi ASOS    (ex: "affid=12345")
  */
 import { buildVintedUrl } from './vintedUrl'
 import { getAffiliateConfig } from './affiliateConfig'
 
 const enc = (s) => encodeURIComponent(s || '')
 
-/** Enrobe une URL cible dans un lien traqué Awin si l'ID éditeur + le marchand sont dispo. */
-function awin(mid, targetUrl) {
-  const { awinId } = getAffiliateConfig()
-  if (!awinId || !mid) return targetUrl
-  return `https://www.awin1.com/cread.php?awinmid=${mid}&awinaffid=${awinId}&ued=${enc(targetUrl)}`
+/** Ajoute un paramètre de suivi d'affiliation (ex: "aff_id=123") à une URL. */
+function withParam(url, param) {
+  const p = (param || '').replace(/^[?&]+/, '').trim()
+  if (!p) return url
+  return `${url}${url.includes('?') ? '&' : '?'}${p}`
 }
 
 /**
@@ -38,33 +40,24 @@ export const RETAILERS = [
     id: 'shein',
     label: 'Shein',
     color: '#111111',
-    build: (q) => awin(getAffiliateConfig().awinMid.shein, `https://fr.shein.com/pdsearch/${enc(q)}`),
-    affiliate: () => {
-      const c = getAffiliateConfig()
-      return Boolean(c.awinId && c.awinMid.shein)
-    },
+    build: (q) => withParam(`https://fr.shein.com/pdsearch/${enc(q)}`, getAffiliateConfig().shein),
+    affiliate: () => Boolean(getAffiliateConfig().shein),
   },
   {
     id: 'zalando',
     label: 'Zalando',
     color: '#FF6900',
     build: (q) =>
-      awin(getAffiliateConfig().awinMid.zalando, `https://www.zalando.fr/recherche/?q=${enc(q)}`),
-    affiliate: () => {
-      const c = getAffiliateConfig()
-      return Boolean(c.awinId && c.awinMid.zalando)
-    },
+      withParam(`https://www.zalando.fr/recherche/?q=${enc(q)}`, getAffiliateConfig().zalando),
+    affiliate: () => Boolean(getAffiliateConfig().zalando),
   },
   {
     id: 'asos',
     label: 'ASOS',
     color: '#2D2D2D',
     build: (q) =>
-      awin(getAffiliateConfig().awinMid.asos, `https://www.asos.com/fr/recherche/?q=${enc(q)}`),
-    affiliate: () => {
-      const c = getAffiliateConfig()
-      return Boolean(c.awinId && c.awinMid.asos)
-    },
+      withParam(`https://www.asos.com/fr/recherche/?q=${enc(q)}`, getAffiliateConfig().asos),
+    affiliate: () => Boolean(getAffiliateConfig().asos),
   },
   {
     id: 'google',

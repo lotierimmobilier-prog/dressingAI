@@ -15,7 +15,9 @@ services:
         VITE_CLAUDE_PROXY: ${VITE_CLAUDE_PROXY:-}
         VITE_BASE: ${VITE_BASE:-/}
         VITE_AMAZON_TAG: ${VITE_AMAZON_TAG:-}
-        VITE_AWIN_ID: ${VITE_AWIN_ID:-}
+        VITE_SHEIN_AFF: ${VITE_SHEIN_AFF:-}
+        VITE_ZALANDO_AFF: ${VITE_ZALANDO_AFF:-}
+        VITE_ASOS_AFF: ${VITE_ASOS_AFF:-}
     image: dressingai:latest
     container_name: dressingai
     restart: unless-stopped

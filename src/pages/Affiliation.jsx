@@ -1,14 +1,15 @@
 import { useState } from 'react'
-import { ArrowLeft, Check, Link2, Info, ExternalLink } from 'lucide-react'
+import { ArrowLeft, Check, Info } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import PageTransition from '../components/layout/PageTransition'
 import { getAffiliateConfig, saveAffiliateConfig } from '../lib/affiliateConfig'
 import { haptic } from '../hooks/useGameification'
 
-const AWIN_SHOPS = [
-  { key: 'shein', label: 'ID marchand Shein', color: '#111111' },
-  { key: 'zalando', label: 'ID marchand Zalando', color: '#FF6900' },
-  { key: 'asos', label: 'ID marchand ASOS', color: '#2D2D2D' },
+// Boutiques en affiliation directe (paramètre de suivi collé depuis leur programme).
+const DIRECT_SHOPS = [
+  { key: 'shein', label: 'Shein', color: '#111111', example: 'aff_id=12345' },
+  { key: 'zalando', label: 'Zalando', color: '#FF6900', example: 'wmc=abcde' },
+  { key: 'asos', label: 'ASOS', color: '#2D2D2D', example: 'affid=12345' },
 ]
 
 export default function Affiliation() {
@@ -20,10 +21,6 @@ export default function Affiliation() {
     setCfg((c) => ({ ...c, ...patch }))
     setSaved(false)
   }
-  function updateMid(patch) {
-    setCfg((c) => ({ ...c, awinMid: { ...c.awinMid, ...patch } }))
-    setSaved(false)
-  }
   function save() {
     saveAffiliateConfig(cfg)
     setSaved(true)
@@ -33,9 +30,7 @@ export default function Affiliation() {
   // Statut en direct (reflète la saisie en cours, même non enregistrée).
   const status = [
     { label: 'Amazon', color: '#FF9900', on: Boolean(cfg.amazonTag) },
-    { label: 'Shein', color: '#111111', on: Boolean(cfg.awinId && cfg.awinMid.shein) },
-    { label: 'Zalando', color: '#FF6900', on: Boolean(cfg.awinId && cfg.awinMid.zalando) },
-    { label: 'ASOS', color: '#2D2D2D', on: Boolean(cfg.awinId && cfg.awinMid.asos) },
+    ...DIRECT_SHOPS.map((s) => ({ label: s.label, color: s.color, on: Boolean(cfg[s.key]) })),
   ]
 
   return (
@@ -45,8 +40,9 @@ export default function Affiliation() {
       </button>
       <h1 className="mb-1 font-display text-3xl">Monétisation 💸</h1>
       <p className="mb-6 text-muted">
-        Renseigne tes identifiants d’affiliation : les liens boutiques deviennent traqués et te
-        rapportent une commission, sans surcoût pour l’acheteur.
+        Affiliation <b className="text-cream">directe</b> avec chaque boutique (aucun intermédiaire
+        payant). Colle l’identifiant que ton programme d’affiliation te fournit : les liens
+        deviennent traqués et te rapportent une commission, sans surcoût pour l’acheteur.
       </p>
 
       {/* Amazon */}
@@ -63,55 +59,32 @@ export default function Affiliation() {
           value={cfg.amazonTag}
           onChange={(e) => update({ amazonTag: e.target.value.trim() })}
         />
-        <a
-          href="https://partenaires.amazon.fr"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="mt-2 inline-flex items-center gap-1 text-xs text-accent"
-        >
-          Créer un compte Amazon Partenaires <ExternalLink size={12} />
-        </a>
       </section>
 
-      {/* Awin (Shein, Zalando, ASOS) */}
+      {/* Boutiques en direct */}
       <section className="card mb-4 p-5">
-        <h2 className="mb-1 flex items-center gap-2 font-display">
-          <Link2 size={18} className="text-accent" /> Awin
-        </h2>
-        <p className="mb-3 text-sm text-muted">
-          Un seul compte Awin gère Shein, Zalando et ASOS. Renseigne ton ID éditeur, puis l’ID
-          marchand de chaque boutique (visible dans ton dashboard Awin, une fois affilié·e).
+        <h2 className="mb-1 font-display">Boutiques en direct</h2>
+        <p className="mb-4 text-sm text-muted">
+          Inscris-toi au programme d’affiliation de chaque boutique (cherche « programme
+          d’affiliation / affiliate » sur leur site), puis colle ici le{' '}
+          <b className="text-cream">paramètre de suivi</b> qu’ils te donnent — au format{' '}
+          <code className="text-cream">clé=valeur</code>.
         </p>
-        <label className="label-mono">ID éditeur Awin</label>
-        <input
-          className="input mb-4 mt-1"
-          placeholder="123456"
-          value={cfg.awinId}
-          onChange={(e) => update({ awinId: e.target.value.trim() })}
-        />
         <div className="grid gap-3">
-          {AWIN_SHOPS.map((m) => (
-            <div key={m.key}>
+          {DIRECT_SHOPS.map((s) => (
+            <div key={s.key}>
               <label className="label-mono flex items-center gap-1.5">
-                <span className="h-2 w-2 rounded-full" style={{ background: m.color }} /> {m.label}
+                <span className="h-2 w-2 rounded-full" style={{ background: s.color }} /> {s.label}
               </label>
               <input
                 className="input mt-1"
-                placeholder="ex. 16994"
-                value={cfg.awinMid[m.key]}
-                onChange={(e) => updateMid({ [m.key]: e.target.value.trim() })}
+                placeholder={`ex. ${s.example}`}
+                value={cfg[s.key]}
+                onChange={(e) => update({ [s.key]: e.target.value.trim() })}
               />
             </div>
           ))}
         </div>
-        <a
-          href="https://www.awin.com"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="mt-3 inline-flex items-center gap-1 text-xs text-accent"
-        >
-          Créer un compte Awin <ExternalLink size={12} />
-        </a>
       </section>
 
       {/* Statut par boutique */}
