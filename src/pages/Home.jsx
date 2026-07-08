@@ -367,6 +367,7 @@ function WeatherBadge({ weather, loading, city, setCity }) {
       </div>
       <p className="label-mono flex items-center justify-end gap-1">
         <MapPin size={10} /> {weather.ville}
+        {weather.demo && <span className="text-coral">· démo</span>}
       </p>
     </button>
   )
