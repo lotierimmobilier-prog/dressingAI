@@ -1,19 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 
-const API_KEY = import.meta.env.VITE_OPENWEATHER_API_KEY
 const CITY_KEY = 'dressingai.weather.city'
-
-const CONDITION_EMOJI = {
-  Clear: '☀️',
-  Clouds: '⛅',
-  Rain: '🌧️',
-  Drizzle: '🌦️',
-  Thunderstorm: '⛈️',
-  Snow: '❄️',
-  Mist: '🌫️',
-  Fog: '🌫️',
-  Haze: '🌫️',
-}
 
 const DEMO_WEATHER = {
   temp: 24,
@@ -22,6 +9,23 @@ const DEMO_WEATHER = {
   ville: 'Paris',
   description: 'ciel dégagé',
   demo: true,
+}
+
+/** Codes météo WMO (Open-Meteo) → emoji + libellé FR. */
+function fromWmo(code) {
+  const c = Number(code)
+  if (c === 0) return { emoji: '☀️', condition: 'Clear', description: 'ciel dégagé' }
+  if (c === 1) return { emoji: '🌤️', condition: 'Clear', description: 'peu nuageux' }
+  if (c === 2) return { emoji: '⛅', condition: 'Clouds', description: 'partiellement nuageux' }
+  if (c === 3) return { emoji: '☁️', condition: 'Clouds', description: 'couvert' }
+  if (c === 45 || c === 48) return { emoji: '🌫️', condition: 'Fog', description: 'brouillard' }
+  if (c >= 51 && c <= 57) return { emoji: '🌦️', condition: 'Drizzle', description: 'bruine' }
+  if ((c >= 61 && c <= 67) || (c >= 80 && c <= 82))
+    return { emoji: '🌧️', condition: 'Rain', description: 'pluie' }
+  if ((c >= 71 && c <= 77) || c === 85 || c === 86)
+    return { emoji: '❄️', condition: 'Snow', description: 'neige' }
+  if (c >= 95) return { emoji: '⛈️', condition: 'Thunderstorm', description: 'orage' }
+  return { emoji: '🌤️', condition: 'Clouds', description: '' }
 }
 
 /** Ville choisie manuellement, persistée en localStorage (précision météo). */
@@ -33,22 +37,54 @@ function readCity() {
   }
 }
 
-function normalizeWeather(data) {
-  const main = data.weather?.[0]?.main
+// Open-Meteo : API météo gratuite et sans clé.
+async function geocodeCity(name) {
+  const url = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(
+    name,
+  )}&count=1&language=fr&format=json`
+  const res = await fetch(url)
+  if (!res.ok) throw new Error('geo error')
+  const data = await res.json()
+  const hit = data.results?.[0]
+  if (!hit) throw new Error('city not found')
+  return { lat: hit.latitude, lon: hit.longitude, ville: hit.name }
+}
+
+async function fetchWeather(lat, lon, ville) {
+  const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code`
+  const res = await fetch(url)
+  if (!res.ok) throw new Error('weather error')
+  const data = await res.json()
+  const cur = data.current
+  const w = fromWmo(cur.weather_code)
   return {
-    temp: Math.round(data.main.temp),
-    condition: main,
-    emoji: CONDITION_EMOJI[main] || '🌤️',
-    ville: data.name,
-    description: data.weather?.[0]?.description || '',
+    temp: Math.round(cur.temperature_2m),
+    condition: w.condition,
+    emoji: w.emoji,
+    description: w.description,
+    ville: ville || 'Ma position',
+  }
+}
+
+// Nom de ville depuis des coordonnées (géoloc) — service gratuit sans clé.
+async function reverseCity(lat, lon) {
+  try {
+    const res = await fetch(
+      `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=fr`,
+    )
+    if (!res.ok) return 'Ma position'
+    const d = await res.json()
+    return d.city || d.locality || d.principalSubdivision || 'Ma position'
+  } catch {
+    return 'Ma position'
   }
 }
 
 /**
- * Récupère la météo via OpenWeatherMap.
- * - Si l'utilisateur a indiqué une ville → recherche par nom (plus précis).
+ * Récupère la météo réelle via Open-Meteo (gratuit, sans clé API).
+ * - Si l'utilisateur a indiqué une ville → géocodage + météo de cette ville.
  * - Sinon → géolocalisation.
- * - Fallback démo si pas de clé, ville introuvable ou géoloc refusée.
+ * - Fallback démo si tout échoue (hors-ligne).
  * Renvoie aussi `city` / `setCity` pour piloter la ville depuis l'UI.
  */
 export function useWeather() {
@@ -70,22 +106,6 @@ export function useWeather() {
   useEffect(() => {
     let cancelled = false
 
-    async function fetchByCoords(lat, lon) {
-      const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&lang=fr&appid=${API_KEY}`
-      const res = await fetch(url)
-      if (!res.ok) throw new Error('weather error')
-      return normalizeWeather(await res.json())
-    }
-
-    async function fetchByCity(name) {
-      const url = `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(
-        name,
-      )}&units=metric&lang=fr&appid=${API_KEY}`
-      const res = await fetch(url)
-      if (!res.ok) throw new Error('weather error')
-      return normalizeWeather(await res.json())
-    }
-
     function done(w) {
       if (!cancelled) {
         setWeather(w)
@@ -95,16 +115,10 @@ export function useWeather() {
 
     if (!cancelled) setLoading(true)
 
-    if (!API_KEY) {
-      done(city ? { ...DEMO_WEATHER, ville: city } : DEMO_WEATHER)
-      return () => {
-        cancelled = true
-      }
-    }
-
-    // Ville renseignée → recherche par nom (prioritaire, plus précis).
+    // Ville renseignée → météo de cette ville (prioritaire, plus précis).
     if (city) {
-      fetchByCity(city)
+      geocodeCity(city)
+        .then((g) => fetchWeather(g.lat, g.lon, g.ville))
         .then(done)
         .catch(() => done({ ...DEMO_WEATHER, ville: city }))
       return () => {
@@ -121,8 +135,10 @@ export function useWeather() {
 
     navigator.geolocation.getCurrentPosition(
       async (pos) => {
+        const { latitude, longitude } = pos.coords
         try {
-          done(await fetchByCoords(pos.coords.latitude, pos.coords.longitude))
+          const ville = await reverseCity(latitude, longitude)
+          done(await fetchWeather(latitude, longitude, ville))
         } catch {
           done(DEMO_WEATHER)
         }
@@ -139,7 +155,7 @@ export function useWeather() {
   return { weather, loading, city, setCity }
 }
 
-/** Prévisions 7 jours (démo générative si pas de clé). */
+/** Prévisions 7 jours (démo générative). */
 export function useForecast() {
   const [days, setDays] = useState([])
   useEffect(() => {

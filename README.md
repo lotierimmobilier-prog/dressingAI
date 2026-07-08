@@ -10,7 +10,8 @@ animé), propulsée par **Supabase**, **Claude (vision + styliste)** et
 
 > 🎭 **Mode démo intégré** : l'app tourne immédiatement, sans aucune clé, avec un
 > dressing de démonstration et des suggestions générées localement. Ajoute tes
-> clés API pour débloquer la synchronisation, l'analyse photo IA et la météo réelle.
+> clés API pour débloquer la synchronisation et l'analyse photo IA. La météo réelle
+> (Open-Meteo) fonctionne sans clé.
 
 ---
 
@@ -39,7 +40,7 @@ npm run build && npm run preview
 | `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY` | Auth, base de données, storage photos | Mode démo (localStorage) |
 | `VITE_ANTHROPIC_API_KEY` | Claude Vision (auto-tag) + styliste IA | Analyse couleur locale + moteur de tenues local |
 | `VITE_CLAUDE_MODEL` | Modèle Claude (défaut `claude-sonnet-4-6`) | — |
-| `VITE_OPENWEATHER_API_KEY` | Météo géolocalisée + prévisions | Météo démo (Paris) |
+| _(météo)_ | Météo réelle via **Open-Meteo** (gratuit, sans clé) — géoloc ou ville saisie | Météo démo (Paris) si hors-ligne |
 
 > ⚠️ **Sécurité** : les appels Claude/Anthropic depuis le navigateur exposent la
 > clé. En production, proxifie-les via une **Supabase Edge Function** ou une route
