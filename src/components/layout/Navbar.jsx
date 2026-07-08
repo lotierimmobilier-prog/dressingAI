@@ -17,18 +17,22 @@ export default function Navbar() {
 
   return (
     <>
-      {/* FAB caméra — toujours visible, ajout rapide de vêtement */}
-      <motion.button
-        whileTap={{ scale: 0.9 }}
-        onClick={() => {
-          haptic([10, 30])
-          navigate('/dressing?add=1')
-        }}
-        className="fixed right-4 bottom-24 z-40 grid h-14 w-14 place-items-center rounded-full bg-accent text-bg shadow-glow"
-        aria-label="Ajouter un vêtement"
-      >
-        <Camera size={24} />
-      </motion.button>
+      {/* FAB caméra — aligné à la colonne centrée (max-w-lg) sur tous les écrans */}
+      <div className="pointer-events-none fixed inset-x-0 bottom-24 z-40">
+        <div className="mx-auto flex max-w-lg justify-end px-4">
+          <motion.button
+            whileTap={{ scale: 0.9 }}
+            onClick={() => {
+              haptic([10, 30])
+              navigate('/dressing?add=1')
+            }}
+            className="pointer-events-auto grid h-14 w-14 place-items-center rounded-full bg-accent text-bg shadow-glow"
+            aria-label="Ajouter un vêtement"
+          >
+            <Camera size={24} />
+          </motion.button>
+        </div>
+      </div>
 
       {/* Bottom navigation */}
       <nav className="fixed inset-x-0 bottom-0 z-40 safe-bottom">

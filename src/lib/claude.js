@@ -120,10 +120,14 @@ export async function analyzeClothing(file) {
  */
 export async function analyzeLook(file) {
   const imageBlock = await fileToImageBlock(file)
-  const prompt = `Analyse cette image d'inspiration mode (capture d'écran, photo de look). Identifie CHAQUE pièce vestimentaire portée. Pour chacune, propose une requête de recherche shopping efficace (marque si visible, matière, coupe, couleur). Return ONLY JSON: { "pieces": [ { "nom": "nom court en français", "categorie": "haut|bas|robe|chaussures|accessoire|manteau", "couleur": "couleur en français", "couleur_hex": "#XXXXXX", "description_recherche": "requête shopping optimisée", "prix_estime_min": nombre_euros, "prix_estime_max": nombre_euros } ] } No markdown, only JSON.`
+  const prompt = `Analyse cette image d'inspiration mode (capture d'écran, photo de look). Identifie CHAQUE pièce vestimentaire portée.
+
+Pour chaque pièce, l'objectif est de retrouver en boutique un article QUASI IDENTIQUE — pas juste "un vêtement de la même couleur". Décris donc TOUS les détails distinctifs et construis une requête de recherche shopping très précise combinant : type exact de la pièce, coupe/fit (oversize, ajusté, droit, crop…), matière apparente (lin, jean, cuir, maille, satin…), col/encolure, longueur des manches, longueur/coupe (mini, midi, taille haute…), motif/imprimé (uni, rayé, vichy, fleuri…), détails notables (boutons, zip, poches, fente, ceinture…), et la MARQUE si un logo est lisible.
+
+Return ONLY JSON: { "pieces": [ { "nom": "nom court en français", "categorie": "haut|bas|robe|chaussures|accessoire|manteau", "couleur": "couleur en français", "couleur_hex": "#XXXXXX", "details": "3-6 attributs clés (coupe, matière, col, motif, détails)", "description_recherche": "requête shopping TRÈS précise pour trouver un article quasi identique (avec marque si visible)", "prix_estime_min": nombre_euros, "prix_estime_max": nombre_euros } ] } No markdown, only JSON.`
   const text = await callClaude({
     content: [imageBlock, { type: 'text', text: prompt }],
-    maxTokens: 1000,
+    maxTokens: 1300,
   })
   return extractJSON(text)
 }

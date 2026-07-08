@@ -51,7 +51,7 @@ export default function App() {
   if (!profile || !profile.prenom) return <Onboarding />
 
   return (
-    <div className="mx-auto min-h-screen max-w-lg pb-28">
+    <div className="mx-auto min-h-screen max-w-lg overflow-x-hidden pb-28">
       <AnimatePresence mode="wait">
         <Routes location={location} key={location.pathname}>
           <Route path="/" element={<Home />} />

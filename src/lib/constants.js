@@ -80,3 +80,20 @@ export const COULEUR_DU_MOMENT = {
   semaine: 'Semaine du 30 juin',
   note: 'La couleur qui réveille tes basiques et capte la lumière d’été.',
 }
+
+// Motif tendance ("Motif du Moment") — basé sur les tendances imprimés
+// Été 2026 (défilés + presse mode) : le vichy fait son grand retour.
+export const MOTIF_DU_MOMENT = {
+  nom: 'Vichy (gingham)',
+  saison: 'Tendance Été 2026',
+  note: 'Le grand retour de l’été : robes, tops et jupes légères façon pique-nique chic.',
+  recherche: 'robe vichy',
+  alternatives: ['Pois', 'Rayures', 'Fleurs aquarelle', 'Carreaux/Plaid'],
+  // Aperçu du motif rendu en CSS (pas d’image).
+  pattern: {
+    backgroundColor: '#F5F5F0',
+    backgroundImage:
+      'linear-gradient(rgba(255,107,107,0.55) 50%, transparent 50%), linear-gradient(90deg, rgba(255,107,107,0.55) 50%, transparent 50%)',
+    backgroundSize: '9px 9px',
+  },
+}

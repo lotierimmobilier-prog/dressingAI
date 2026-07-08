@@ -20,9 +20,9 @@ function sizeSuffix(categorie, men) {
 
 // Exemple montré quand l'IA n'est pas active (pour visualiser le concept).
 const DEMO_PIECES = [
-  { nom: 'Blazer oversize beige', categorie: 'manteau', couleur: 'Beige', couleur_hex: '#D9C7A8', description_recherche: 'blazer oversize beige femme', prix_estime_min: 30, prix_estime_max: 70 },
-  { nom: 'Jean mom taille haute', categorie: 'bas', couleur: 'Bleu clair', couleur_hex: '#8FA9C9', description_recherche: 'jean mom taille haute clair', prix_estime_min: 20, prix_estime_max: 45 },
-  { nom: 'Baskets blanches minimalistes', categorie: 'chaussures', couleur: 'Blanc', couleur_hex: '#F2F2EF', description_recherche: 'baskets blanches minimalistes cuir', prix_estime_min: 35, prix_estime_max: 90 },
+  { nom: 'Blazer oversize beige', categorie: 'manteau', couleur: 'Beige', couleur_hex: '#D9C7A8', details: 'Coupe oversize, revers cranté, double boutonnage, lin/viscose', description_recherche: 'blazer oversize beige lin double boutonnage femme', prix_estime_min: 30, prix_estime_max: 70 },
+  { nom: 'Jean mom taille haute', categorie: 'bas', couleur: 'Bleu clair', couleur_hex: '#8FA9C9', details: 'Taille haute, coupe mom, délavé clair, ourlet brut', description_recherche: 'jean mom taille haute délavé clair ourlet brut', prix_estime_min: 20, prix_estime_max: 45 },
+  { nom: 'Baskets blanches minimalistes', categorie: 'chaussures', couleur: 'Blanc', couleur_hex: '#F2F2EF', details: 'Cuir lisse, semelle fine, minimalistes, tige basse', description_recherche: 'baskets blanches cuir minimalistes semelle fine basses', prix_estime_min: 35, prix_estime_max: 90 },
 ]
 
 export default function Shop() {
@@ -143,6 +143,7 @@ export default function Shop() {
                     {p.couleur}
                     {p.prix_estime_min ? ` · ~${p.prix_estime_min}–${p.prix_estime_max} €` : ''}
                   </p>
+                  {p.details && <p className="mt-0.5 text-xs text-cream/70">{p.details}</p>}
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-2">

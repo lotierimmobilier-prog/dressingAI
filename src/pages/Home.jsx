@@ -15,7 +15,7 @@ import { useGameification } from '../hooks/useGameification'
 import { generateOutfits } from '../lib/outfitEngine'
 import { suggestOutfits, isClaudeConfigured } from '../lib/claude'
 import { buildVintedUrl } from '../lib/vintedUrl'
-import { COULEUR_DU_MOMENT, COLOR_WHEEL } from '../lib/constants'
+import { COULEUR_DU_MOMENT, COLOR_WHEEL, MOTIF_DU_MOMENT } from '../lib/constants'
 
 export default function Home() {
   const navigate = useNavigate()
@@ -282,6 +282,31 @@ export default function Home() {
               className="mt-1 text-sm text-accent underline-offset-2 hover:underline"
             >
               Voir mes pièces dans cette couleur →
+            </button>
+          </div>
+        </section>
+
+        {/* Motif du moment (tendance réelle) */}
+        <section className="mb-4 flex items-center gap-4 rounded-3xl border border-white/10 p-4">
+          <div
+            className="h-14 w-14 shrink-0 overflow-hidden rounded-2xl border border-white/10"
+            style={MOTIF_DU_MOMENT.pattern}
+          />
+          <div className="min-w-0">
+            <p className="label-mono">Motif du moment · {MOTIF_DU_MOMENT.saison}</p>
+            <p className="font-display">{MOTIF_DU_MOMENT.nom}</p>
+            <p className="text-sm text-muted">{MOTIF_DU_MOMENT.note}</p>
+            <button
+              onClick={() =>
+                window.open(
+                  buildVintedUrl({ description: MOTIF_DU_MOMENT.recherche }),
+                  '_blank',
+                  'noopener,noreferrer',
+                )
+              }
+              className="mt-1 text-sm text-accent underline-offset-2 hover:underline"
+            >
+              Trouver ce motif sur Vinted →
             </button>
           </div>
         </section>
