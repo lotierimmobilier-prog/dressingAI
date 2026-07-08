@@ -20,10 +20,20 @@ function sizeSuffix(categorie, men) {
 
 // Exemple montré quand l'IA n'est pas active (pour visualiser le concept).
 const DEMO_PIECES = [
-  { nom: 'Blazer oversize beige', categorie: 'manteau', couleur: 'Beige', couleur_hex: '#D9C7A8', details: 'Coupe oversize, revers cranté, double boutonnage, lin/viscose', description_recherche: 'blazer oversize beige lin double boutonnage femme', prix_estime_min: 30, prix_estime_max: 70 },
-  { nom: 'Jean mom taille haute', categorie: 'bas', couleur: 'Bleu clair', couleur_hex: '#8FA9C9', details: 'Taille haute, coupe mom, délavé clair, ourlet brut', description_recherche: 'jean mom taille haute délavé clair ourlet brut', prix_estime_min: 20, prix_estime_max: 45 },
-  { nom: 'Baskets blanches minimalistes', categorie: 'chaussures', couleur: 'Blanc', couleur_hex: '#F2F2EF', details: 'Cuir lisse, semelle fine, minimalistes, tige basse', description_recherche: 'baskets blanches cuir minimalistes semelle fine basses', prix_estime_min: 35, prix_estime_max: 90 },
+  { nom: 'Blazer oversize beige', categorie: 'manteau', couleur: 'Beige', couleur_hex: '#D9C7A8', details: 'Coupe oversize, revers cranté, double boutonnage, lin/viscose', description_recherche: 'blazer oversize beige lin double boutonnage femme', boutiques: ['zalando', 'asos', 'google'], prix_estime_min: 30, prix_estime_max: 70 },
+  { nom: 'Jean mom taille haute', categorie: 'bas', couleur: 'Bleu clair', couleur_hex: '#8FA9C9', details: 'Taille haute, coupe mom, délavé clair, ourlet brut', description_recherche: 'jean mom taille haute délavé clair ourlet brut', boutiques: ['shein', 'zalando', 'vinted', 'google'], prix_estime_min: 20, prix_estime_max: 45 },
+  { nom: 'Baskets blanches minimalistes', categorie: 'chaussures', couleur: 'Blanc', couleur_hex: '#F2F2EF', details: 'Cuir lisse, semelle fine, minimalistes, tige basse', description_recherche: 'baskets blanches cuir minimalistes semelle fine basses', boutiques: ['zalando', 'amazon', 'google'], prix_estime_min: 35, prix_estime_max: 90 },
 ]
+
+/** Boutiques à afficher pour une pièce : celles recommandées par l'IA (+ Google
+ *  comme filet, car il agrège de nombreuses boutiques). Fallback = toutes. */
+function retailersFor(piece) {
+  const ids = piece?.boutiques
+  if (!Array.isArray(ids) || !ids.length) return RETAILERS
+  const ordered = ids.filter((id) => RETAILERS.some((r) => r.id === id))
+  if (!ordered.includes('google')) ordered.push('google')
+  return ordered.map((id) => RETAILERS.find((r) => r.id === id)).filter(Boolean)
+}
 
 export default function Shop() {
   const navigate = useNavigate()
@@ -147,7 +157,7 @@ export default function Shop() {
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-2">
-                {RETAILERS.map((r) => (
+                {retailersFor(p).map((r) => (
                   <button
                     key={r.id}
                     onClick={() => openShop(r, p)}
