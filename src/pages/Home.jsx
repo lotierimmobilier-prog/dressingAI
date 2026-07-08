@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { MapPin, Loader2, Sparkles, Palette, Camera, Shirt, ShoppingBag, Check, Plus, X } from 'lucide-react'
+import { MapPin, Loader2, Sparkles, Palette, Camera, Shirt, ShoppingBag, Check, Plus } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import MirrorBackground from '../components/layout/MirrorBackground'
 import PageTransition from '../components/layout/PageTransition'
@@ -15,7 +15,10 @@ import { useGameification } from '../hooks/useGameification'
 import { generateOutfits } from '../lib/outfitEngine'
 import { suggestOutfits, isClaudeConfigured } from '../lib/claude'
 import { buildVintedUrl } from '../lib/vintedUrl'
-import { COULEUR_DU_MOMENT, COLOR_WHEEL, MOTIFS_TENDANCE } from '../lib/constants'
+import { COULEUR_DU_MOMENT, MOTIFS_TENDANCE } from '../lib/constants'
+
+// Palette du jour épurée : 8 couleurs essentielles (le reste via le "+" libre).
+const PALETTE_PRESETS = ['#0D0D0D', '#F5F5F0', '#D9C7A8', '#E8C547', '#FF6B6B', '#A8E6CF', '#7FA6C9', '#FF9EC4']
 
 export default function Home() {
   const navigate = useNavigate()
@@ -88,7 +91,8 @@ export default function Home() {
       if (cur.length >= 4) return [...cur.slice(1), c]
       return [...cur, c]
     })
-  const removeColor = (c) => setPalette((cur) => cur.filter((x) => x !== c))
+  // Couleurs affichées : presets + éventuelles couleurs perso déjà choisies.
+  const visibleColors = [...PALETTE_PRESETS, ...palette.filter((c) => !PALETTE_PRESETS.includes(c))]
 
   return (
     <MirrorBackground tint={tint}>
@@ -135,19 +139,18 @@ export default function Home() {
             <p className="label-mono">Palette du jour</p>
             <span className="label-mono ml-auto">{palette.length}/4</span>
           </div>
-          <div className="grid grid-cols-8 gap-2">
-            {COLOR_WHEEL.map((c) => {
+          <div className="no-scrollbar -mx-1 flex items-center gap-2.5 overflow-x-auto px-1 py-1">
+            {visibleColors.map((c) => {
               const on = palette.includes(c)
               return (
                 <button
                   key={c}
                   onClick={() => toggleColor(c)}
                   aria-label={`Couleur ${c}`}
-                  className="relative aspect-square rounded-xl border border-white/10 transition"
+                  className="relative h-9 w-9 shrink-0 rounded-full border border-white/10 transition"
                   style={{
                     background: c,
-                    transform: on ? 'scale(1.12)' : 'scale(1)',
-                    boxShadow: on ? `0 0 0 2px ${c}, 0 0 12px ${c}aa` : 'none',
+                    boxShadow: on ? `0 0 0 2px #0D0D0D, 0 0 0 4px ${c}` : 'none',
                   }}
                 >
                   {on && (
@@ -160,10 +163,10 @@ export default function Home() {
             })}
             {/* Sélecteur libre (couleur personnalisée) */}
             <label
-              className="relative grid aspect-square cursor-pointer place-items-center rounded-xl border border-dashed border-white/25 text-muted"
-              title="Couleur personnalisée"
+              className="relative grid h-9 w-9 shrink-0 cursor-pointer place-items-center rounded-full border border-dashed border-white/25 text-muted"
+              title="Couleur libre"
             >
-              <Plus size={16} />
+              <Plus size={15} />
               <input
                 type="color"
                 onChange={(e) => addCustom(e.target.value)}
@@ -171,26 +174,6 @@ export default function Home() {
               />
             </label>
           </div>
-          <p className="mt-2 label-mono">Touche une couleur (ou + pour une couleur libre)</p>
-
-          {/* Aperçu de la palette choisie — tap pour retirer */}
-          {palette.length > 0 && (
-            <div className="mt-3 flex flex-wrap gap-2">
-              {palette.map((c) => (
-                <button
-                  key={c}
-                  onClick={() => removeColor(c)}
-                  className="group relative h-8 w-8 rounded-full border border-white/15"
-                  style={{ background: c }}
-                  title="Retirer"
-                >
-                  <span className="absolute inset-0 grid place-items-center rounded-full bg-black/40 opacity-0 transition group-hover:opacity-100">
-                    <X size={13} className="text-cream" />
-                  </span>
-                </button>
-              ))}
-            </div>
-          )}
         </section>
 
         {/* Suggestions IA */}
