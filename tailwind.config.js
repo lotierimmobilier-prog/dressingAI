@@ -8,8 +8,10 @@ export default {
         surface: '#161616',
         'surface-2': '#1E1E1E',
         accent: {
-          DEFAULT: '#8B7CF0', // violet de marque (lumineux, texte sombre lisible)
-          soft: '#A99CF5',
+          // Couleur d'accent pilotée par une variable CSS → personnalisable
+          // en direct (voir src/lib/theme.js). Défaut = violet de marque.
+          DEFAULT: 'rgb(var(--accent-rgb) / <alpha-value>)',
+          soft: 'rgb(var(--accent-soft-rgb) / <alpha-value>)',
         },
         brand: {
           violet: '#7B6CE0',
@@ -32,7 +34,7 @@ export default {
         '3xl': '2rem',
       },
       boxShadow: {
-        glow: '0 0 40px -8px rgba(139, 124, 240, 0.5)',
+        glow: '0 0 40px -8px rgb(var(--accent-rgb) / 0.5)',
         'glow-coral': '0 0 40px -8px rgba(255, 107, 107, 0.45)',
         card: '0 8px 30px -12px rgba(0, 0, 0, 0.7)',
       },

@@ -4,6 +4,9 @@
 
 @layer base {
   :root {
+    /* Couleur d'accent personnalisable (défaut = violet de marque #8B7CF0) */
+    --accent-rgb: 139 124 240;
+    --accent-soft-rgb: 169 156 245;
     --mood-1: #8b7cf0;
     --mood-2: #ff6b6b;
     --mood-3: #a8e6cf;

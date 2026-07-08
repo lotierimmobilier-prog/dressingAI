@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { LogOut, Users, Mail, ChevronRight, Trophy, Wand2, Shirt, CalendarRange, Info, ShoppingBag } from 'lucide-react'
+import { LogOut, Users, Mail, ChevronRight, Trophy, Wand2, Shirt, CalendarRange, Info, ShoppingBag, Palette, Check, Plus } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import PageTransition from '../components/layout/PageTransition'
 import Modal from '../components/ui/Modal'
@@ -10,6 +10,7 @@ import { useWardrobeStore } from '../stores/wardrobeStore'
 import { useGameification } from '../hooks/useGameification'
 import { isSupabaseConfigured } from '../lib/supabase'
 import { isClaudeConfigured } from '../lib/claude'
+import { ACCENT_PRESETS, getAccent, setAccent, DEFAULT_ACCENT } from '../lib/theme'
 
 const SHORTCUTS = [
   { to: '/shop', icon: ShoppingBag, label: 'Shopper un look', desc: 'Capture → boutiques', color: '#E8C547' },
@@ -27,7 +28,13 @@ export default function Profil() {
   const { level, badges } = useGameification()
 
   const [shareOpen, setShareOpen] = useState(false)
+  const [accent, setAccentState] = useState(getAccent())
   const [inviteEmail, setInviteEmail] = useState('')
+
+  const chooseAccent = (hex) => {
+    setAccentState(hex)
+    setAccent(hex)
+  }
   const [members, setMembers] = useState([
     { email: profile?.prenom ? `${profile.prenom}` : 'Moi', color: '#8B7CF0' },
   ])
@@ -95,6 +102,63 @@ export default function Profil() {
               <span className="text-[11px] leading-tight">{b.label}</span>
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* Couleur de l'app — sélecteur libre */}
+      <section className="card mb-5 p-5">
+        <h2 className="mb-3 flex items-center gap-2 font-display">
+          <Palette size={18} className="text-accent" /> Couleur de l’app
+        </h2>
+        <p className="mb-3 text-sm text-muted">
+          Choisis la couleur de l’interface (boutons, accents, reflets).
+        </p>
+        <div className="flex items-center gap-4">
+          <label
+            className="relative h-16 w-16 shrink-0 cursor-pointer rounded-2xl border border-white/15 shadow-glow"
+            style={{ background: accent }}
+            title="Choisir une couleur"
+          >
+            <input
+              type="color"
+              value={accent}
+              onChange={(e) => chooseAccent(e.target.value)}
+              className="absolute inset-0 cursor-pointer opacity-0"
+            />
+            <span className="absolute -bottom-1 -right-1 grid h-6 w-6 place-items-center rounded-full bg-bg text-cream">
+              <Plus size={14} />
+            </span>
+          </label>
+          <div className="flex-1">
+            <p className="font-mono text-sm text-cream">{accent.toUpperCase()}</p>
+            <button
+              onClick={() => chooseAccent(DEFAULT_ACCENT)}
+              className="mt-1 text-sm text-muted hover:text-cream"
+            >
+              Réinitialiser (violet)
+            </button>
+          </div>
+        </div>
+        {/* Accès rapides (optionnel) */}
+        <div className="mt-4 flex flex-wrap gap-2">
+          {ACCENT_PRESETS.map((p) => {
+            const on = accent.toLowerCase() === p.hex.toLowerCase()
+            return (
+              <button
+                key={p.hex}
+                onClick={() => chooseAccent(p.hex)}
+                title={p.nom}
+                className="relative h-8 w-8 rounded-full border border-white/15"
+                style={{ background: p.hex, boxShadow: on ? `0 0 0 2px #0D0D0D, 0 0 0 4px ${p.hex}` : 'none' }}
+              >
+                {on && (
+                  <span className="absolute inset-0 grid place-items-center">
+                    <Check size={14} className="text-bg" />
+                  </span>
+                )}
+              </button>
+            )
+          })}
         </div>
       </section>
 
