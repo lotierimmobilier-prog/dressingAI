@@ -15,7 +15,13 @@ import { useGameification, haptic } from '../hooks/useGameification'
 import { generateOutfits } from '../lib/outfitEngine'
 import { suggestOutfits, isClaudeConfigured } from '../lib/claude'
 import { buildVintedUrl } from '../lib/vintedUrl'
+import { RETAILERS } from '../lib/affiliate'
 import { COULEUR_DU_MOMENT, MOTIFS_TENDANCE } from '../lib/constants'
+
+// Où chercher un motif : neuf (Shein en tête = défaut recommandé) ou occasion.
+const MOTIF_NEUF_IDS = ['shein', 'zalando', 'asos']
+const MOTIF_OCCASION_IDS = ['vinted']
+const retailerById = (id) => RETAILERS.find((r) => r.id === id)
 
 // Palette du jour épurée : 8 couleurs essentielles (le reste via le "+" libre).
 const PALETTE_PRESETS = ['#0D0D0D', '#F5F5F0', '#D9C7A8', '#E8C547', '#FF6B6B', '#A8E6CF', '#7FA6C9', '#FF9EC4']
@@ -35,6 +41,13 @@ export default function Home() {
   const [outfits, setOutfits] = useState([])
   const [index, setIndex] = useState(0)
   const [thinking, setThinking] = useState(false)
+  const [motifChoice, setMotifChoice] = useState(null)
+
+  function openMotifShop(retailer, motif) {
+    haptic([10, 20])
+    window.open(retailer.build(motif.recherche), '_blank', 'noopener,noreferrer')
+    setMotifChoice(null)
+  }
 
   const tint = mood?.tint || palette[0] || '#8B7CF0'
 
@@ -272,15 +285,17 @@ export default function Home() {
         {/* Motifs du moment (tendances réelles) — choisis-en un */}
         <section className="mb-4 rounded-3xl border border-white/10 p-4">
           <p className="label-mono mb-1">Motifs du moment · Tendance Été 2026</p>
-          <p className="mb-3 text-sm text-muted">Touche un motif pour le trouver en boutique.</p>
+          <p className="mb-3 text-sm text-muted">
+            Touche un motif, puis choisis neuf ou occasion.
+          </p>
           <div className="no-scrollbar -mx-1 flex gap-3 overflow-x-auto px-1 pb-1">
             {MOTIFS_TENDANCE.map((m) => (
-              <a
+              <button
                 key={m.id}
-                href={buildVintedUrl({ description: m.recherche })}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() => haptic()}
+                onClick={() => {
+                  haptic()
+                  setMotifChoice(m)
+                }}
                 className="w-[72px] shrink-0"
               >
                 <div
@@ -290,12 +305,91 @@ export default function Home() {
                   {!m.pattern && <span>{m.emoji}</span>}
                 </div>
                 <p className="mt-1 text-center text-xs text-cream/90">{m.nom}</p>
-              </a>
+              </button>
             ))}
           </div>
         </section>
+
+        <MotifShopSheet
+          motif={motifChoice}
+          onClose={() => setMotifChoice(null)}
+          onPick={openMotifShop}
+        />
       </PageTransition>
     </MirrorBackground>
+  )
+}
+
+/** Feuille de choix : où chercher un motif — neuf (Shein par défaut) ou occasion. */
+function MotifShopSheet({ motif, onClose, onPick }) {
+  const neuf = MOTIF_NEUF_IDS.map(retailerById).filter(Boolean)
+  const occasion = MOTIF_OCCASION_IDS.map(retailerById).filter(Boolean)
+
+  return (
+    <AnimatePresence>
+      {motif && (
+        <motion.div
+          className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 p-4"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          onClick={onClose}
+        >
+          <motion.div
+            className="glass w-full max-w-md rounded-3xl p-5"
+            initial={{ y: 40, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 40, opacity: 0 }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <p className="label-mono mb-1">Motif · {motif.nom}</p>
+            <p className="mb-4 text-sm text-muted">Où veux-tu le chercher ?</p>
+
+            <p className="label-mono mb-2 text-cream/90">Neuf</p>
+            <div className="mb-4 space-y-2">
+              {neuf.map((r, i) => (
+                <button
+                  key={r.id}
+                  onClick={() => onPick(r, motif)}
+                  className={`flex w-full items-center justify-between gap-2 rounded-2xl border px-4 py-3 text-sm transition ${
+                    i === 0
+                      ? 'border-accent/50 bg-accent/15 text-accent'
+                      : 'border-white/10 bg-surface-2 hover:border-white/25'
+                  }`}
+                >
+                  <span className="flex items-center gap-2">
+                    <span className="h-2.5 w-2.5 rounded-full" style={{ background: r.color }} />
+                    {r.label}
+                  </span>
+                  {i === 0 ? (
+                    <span className="label-mono">Recommandé</span>
+                  ) : (
+                    <ShoppingBag size={15} className="text-muted" />
+                  )}
+                </button>
+              ))}
+            </div>
+
+            <p className="label-mono mb-2 text-cream/90">Occasion</p>
+            <div className="space-y-2">
+              {occasion.map((r) => (
+                <button
+                  key={r.id}
+                  onClick={() => onPick(r, motif)}
+                  className="flex w-full items-center justify-between gap-2 rounded-2xl border border-white/10 bg-surface-2 px-4 py-3 text-sm transition hover:border-white/25"
+                >
+                  <span className="flex items-center gap-2">
+                    <span className="h-2.5 w-2.5 rounded-full" style={{ background: r.color }} />
+                    {r.label}
+                  </span>
+                  <ShoppingBag size={15} className="text-muted" />
+                </button>
+              ))}
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   )
 }
 
