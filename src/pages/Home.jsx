@@ -19,7 +19,7 @@ import { RETAILERS } from '../lib/affiliate'
 import { COULEUR_DU_MOMENT, MOTIFS_TENDANCE } from '../lib/constants'
 
 // Où chercher un motif : neuf (Shein en tête = défaut recommandé) ou occasion.
-const MOTIF_NEUF_IDS = ['shein', 'zalando', 'asos']
+const MOTIF_NEUF_IDS = ['shein', 'amazon']
 const MOTIF_OCCASION_IDS = ['vinted']
 const retailerById = (id) => RETAILERS.find((r) => r.id === id)
 
