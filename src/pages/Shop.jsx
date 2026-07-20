@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom'
 import PageTransition from '../components/layout/PageTransition'
 import { analyzeLook, isClaudeConfigured } from '../lib/claude'
 import { RETAILERS, hasAffiliate } from '../lib/affiliate'
+import { isAdminUser } from '../lib/admin'
 import { tileGradient } from '../lib/colors'
 import { haptic } from '../hooks/useGameification'
 import { useAuthStore } from '../stores/authStore'
@@ -227,7 +228,7 @@ export default function Shop() {
             <p>
               Certains liens sont affiliés : si tu achètes via ces liens, DressingAI peut
               percevoir une commission, sans surcoût pour toi.
-              {!hasAffiliate() && (
+              {isAdminUser(user) && !hasAffiliate() && (
                 <>
                   {' '}
                   <button

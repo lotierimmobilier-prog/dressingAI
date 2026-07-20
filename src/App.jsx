@@ -4,6 +4,7 @@ import { AnimatePresence } from 'framer-motion'
 import { useAuthStore } from './stores/authStore'
 import { useWardrobeStore } from './stores/wardrobeStore'
 import { useOutfitStore } from './stores/outfitStore'
+import { isAdminUser } from './lib/admin'
 import Navbar from './components/layout/Navbar'
 
 import Auth from './pages/Auth'
@@ -64,7 +65,10 @@ export default function App() {
           <Route path="/semaine" element={<Semaine />} />
           <Route path="/shop" element={<Shop />} />
           <Route path="/mes-tailles" element={<MesTailles />} />
-          <Route path="/affiliation" element={<Affiliation />} />
+          <Route
+            path="/affiliation"
+            element={isAdminUser(user) ? <Affiliation /> : <Navigate to="/" replace />}
+          />
           <Route path="/profil" element={<Profil />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

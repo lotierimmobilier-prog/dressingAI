@@ -10,12 +10,13 @@ import { useWardrobeStore } from '../stores/wardrobeStore'
 import { useGameification } from '../hooks/useGameification'
 import { isSupabaseConfigured } from '../lib/supabase'
 import { isClaudeConfigured } from '../lib/claude'
+import { isAdminUser } from '../lib/admin'
 import { ACCENT_PRESETS, getAccent, setAccent, DEFAULT_ACCENT } from '../lib/theme'
 
 const SHORTCUTS = [
   { to: '/mes-tailles', icon: Ruler, label: 'Mes tailles', desc: 'Tailles, pointure, mesures', color: '#7FA6C9' },
   { to: '/shop', icon: ShoppingBag, label: 'Shopper un look', desc: 'Capture → boutiques', color: '#E8C547' },
-  { to: '/affiliation', icon: Wallet, label: 'Monétisation', desc: 'Tes liens d’affiliation', color: '#8FD4A8' },
+  { to: '/affiliation', icon: Wallet, label: 'Monétisation', desc: 'Tes liens d’affiliation', color: '#8FD4A8', admin: true },
   { to: '/style-twin', icon: Wand2, label: 'Style Twin', desc: 'Ton alter ego mode', color: '#FF6B6B' },
   { to: '/capsule', icon: Shirt, label: 'Capsule Wardrobe', desc: '10 pièces, X tenues', color: '#A8E6CF' },
   { to: '/semaine', icon: CalendarRange, label: 'Ma semaine', desc: 'Météo + tenues 7j', color: '#8B7CF0' },
@@ -24,6 +25,9 @@ const SHORTCUTS = [
 export default function Profil() {
   const navigate = useNavigate()
   const profile = useAuthStore((s) => s.profile)
+  const user = useAuthStore((s) => s.user)
+  const admin = isAdminUser(user)
+  const shortcuts = SHORTCUTS.filter((s) => admin || !s.admin)
   const signOut = useAuthStore((s) => s.signOut)
   const saveProfile = useAuthStore((s) => s.saveProfile)
   const itemsCount = useWardrobeStore((s) => s.items.length)
@@ -166,7 +170,7 @@ export default function Profil() {
 
       {/* Raccourcis fonctions uniques */}
       <section className="mb-5 space-y-2">
-        {SHORTCUTS.map((s) => (
+        {shortcuts.map((s) => (
           <button
             key={s.to}
             onClick={() => navigate(s.to)}
