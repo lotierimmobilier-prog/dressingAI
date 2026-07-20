@@ -15,7 +15,10 @@ export const useWardrobeStore = create(
 
       async load(userId) {
         if (!isSupabaseConfigured) {
-          if (!get().loaded) set({ items: DEMO_VETEMENTS, loaded: true })
+          // Mode démo : on démarre avec un dressing VIDE. Chacun ajoute ses
+          // propres pièces (appareil photo / +). Les 12 exemples restent
+          // disponibles à la demande via seedDemo().
+          if (!get().loaded) set({ items: [], loaded: true })
           return
         }
         const { data } = await supabase
@@ -93,6 +96,15 @@ export const useWardrobeStore = create(
     }),
     {
       name: 'dressingai-wardrobe',
+      // v1 : on ne pré-remplit plus le dressing avec les pièces de démo.
+      // Cette migration vide, une seule fois, le dressing de démo déjà stocké
+      // localement pour repartir d'un dressing vide (les vraies pièces ajoutées
+      // par l'utilisateur, s'il y en a, ne sont pas concernées côté Supabase).
+      version: 1,
+      migrate: (persisted, version) => {
+        if (version < 1) return { items: [], loaded: false }
+        return persisted
+      },
       partialize: (state) =>
         isSupabaseConfigured ? {} : { items: state.items, loaded: state.loaded },
     },
